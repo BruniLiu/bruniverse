@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "emil-design-eng": {
+      "source": "emilkowalski/skill",
+      "sourceType": "github",
+      "skillPath": "skills/emil-design-eng/SKILL.md",
+      "computedHash": "ac3fc5b4e206488ffc408a2806f829bb2e5eaf518fded09be34790685c2b3a0d"
+    },
+    "web-design-engineer": {
+      "source": "ConardLi/garden-skills",
+      "sourceType": "github",
+      "skillPath": "skills/web-design-engineer/SKILL.md",
+      "computedHash": "bc496fd0cd6cff29cb1b6c7172e08c9a8b94e97fa166ca55715aedbb0fac8cad"
+    }
+  }
+}

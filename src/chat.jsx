@@ -1,62 +1,92 @@
-import React, { useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import ReactDOM from "react-dom/client";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { motion, useReducedMotion } from "framer-motion";
 import {
   ArrowLeft,
-  Bot,
-  Boxes,
-  FlaskConical,
-  FolderPlus,
-  LayoutGrid,
-  Loader2,
+  BookOpen,
+  Database,
+  Leaf,
   MessageSquare,
-  MoreHorizontal,
-  PanelLeft,
   Plus,
-  Search,
-  SquarePen,
-  UserCircle,
+  Send,
+  ShieldCheck,
+  Sparkles,
 } from "lucide-react";
-import {
-  Conversation,
-  ConversationContent,
-  ConversationEmptyState,
-  ConversationScrollButton,
-} from "./components/ai/conversation";
-import { Message, MessageContent } from "./components/ai/message";
-import AiChatInput from "./components/react-bits/AiChatInput";
+import { streamDeepSeekReply } from "./lib/deepseek";
 import "./react.css";
 
-const starterMessages = [];
+const motionEase = [0.23, 1, 0.32, 1];
 
-const suggestions = [
-  "Explain the 17 SDGs in simple language.",
-  "Help me write an SDG 13 case study.",
-  "Give me 3 carbon footprint reduction ideas.",
-  "How should I cite sources in APA 7?",
+const examplePrompts = [
+  "What is SDG 13?",
+  "How can education reduce inequality?",
+  "What datasets can I use for climate research?",
+  "How can students take SDG action?",
 ];
 
-const gpts = ["SDG Researcher", "APA 7 Helper", "Carbon Footprint Coach"];
-const recents = [
-  "SDG website hero",
-  "Carbon footprint notes",
-  "APA reference help",
+const capabilityCards = [
+  {
+    title: "Explain",
+    copy: "Break down SDG ideas into clear learning notes.",
+    icon: BookOpen,
+  },
+  {
+    title: "Research",
+    copy: "Suggest dataset directions for academic inquiry.",
+    icon: Database,
+  },
+  {
+    title: "Act",
+    copy: "Turn awareness into practical sustainability steps.",
+    icon: Leaf,
+  },
 ];
 
-const navItems = [
-  { icon: SquarePen, label: "New chat" },
-  { icon: Search, label: "Search chats" },
-  { icon: Bot, label: "Unknown" },
-  { icon: MoreHorizontal, label: "More" },
-];
+function StarfieldBackdrop() {
+  return (
+    <div className="pointer-events-none absolute inset-[-5vh] z-0 overflow-hidden">
+      <div className="hero-starfield hero-starfield-far absolute inset-0 opacity-45" />
+      <div className="hero-starfield hero-starfield-near absolute inset-0 opacity-30" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(37,99,235,0.2)_0%,rgba(14,165,233,0.09)_25%,transparent_52%),radial-gradient(circle_at_18%_78%,rgba(20,184,166,0.11)_0%,transparent_42%),radial-gradient(circle_at_center,rgba(2,5,11,0.18)_0%,rgba(2,5,11,0.94)_76%)]" />
+      <div className="noise-overlay absolute inset-0 opacity-[0.08] mix-blend-screen" />
+    </div>
+  );
+}
 
-const projects = [
-  { icon: FolderPlus, label: "New project" },
-  { icon: FlaskConical, label: "Chatbox" },
-  { icon: Boxes, label: "SDG structure" },
-  { icon: LayoutGrid, label: "Project website" },
-];
+function EmptyState({ onPrompt, disabled }) {
+  return (
+    <div className="mx-auto grid w-full max-w-3xl content-center gap-5 px-3 py-4 text-center sm:gap-6 sm:px-4 sm:py-6">
+      <div>
+        <div className="mx-auto grid h-10 w-10 place-items-center rounded-full border border-sky-100/20 bg-sky-100/[0.08] text-sky-100 shadow-[0_0_34px_rgba(56,189,248,0.12)] sm:h-12 sm:w-12">
+          <Sparkles size={18} />
+        </div>
+        <h2 className="mt-4 text-2xl font-bold leading-tight text-white sm:text-3xl">
+          Ask a sustainability question.
+        </h2>
+        <p className="mx-auto mt-2 max-w-2xl text-sm font-medium leading-relaxed text-white/60">
+          Unknown is an educational prototype for exploring SDG concepts,
+          research paths, and practical action ideas.
+        </p>
+      </div>
+
+      <div className="grid gap-2 sm:grid-cols-2">
+        {examplePrompts.map((prompt) => (
+          <button
+            key={prompt}
+            type="button"
+            disabled={disabled}
+            onClick={() => onPrompt(prompt)}
+            className="rounded-lg border border-white/12 bg-white/[0.045] px-4 py-3 text-left text-sm font-semibold leading-6 text-white/70 backdrop-blur transition hover:border-sky-100/34 hover:bg-white/[0.075] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-200 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {prompt}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function MarkdownMessage({ content }) {
   return (
@@ -64,63 +94,79 @@ function MarkdownMessage({ content }) {
       remarkPlugins={[remarkGfm]}
       components={{
         h1: ({ children }) => (
-          <h1 className="mb-3 mt-1 text-xl font-extrabold leading-tight text-white">
+          <h1 className="mb-3 mt-1 text-xl font-bold leading-tight text-white">
             {children}
           </h1>
         ),
         h2: ({ children }) => (
-          <h2 className="mb-2 mt-4 text-lg font-extrabold leading-tight text-white">
+          <h2 className="mb-2 mt-4 text-lg font-bold leading-tight text-white">
             {children}
           </h2>
         ),
         h3: ({ children }) => (
-          <h3 className="mb-2 mt-3 text-base font-extrabold text-white">
+          <h3 className="mb-2 mt-3 text-base font-bold leading-tight text-white">
             {children}
           </h3>
         ),
         p: ({ children }) => (
-          <p className="my-2 leading-7 text-white/84">{children}</p>
+          <p className="my-2 leading-6 text-white/78 first:mt-0 last:mb-0">
+            {children}
+          </p>
         ),
+        strong: ({ children }) => (
+          <strong className="font-bold text-white">{children}</strong>
+        ),
+        em: ({ children }) => <em className="text-white/86">{children}</em>,
         ul: ({ children }) => (
-          <ul className="my-3 list-disc space-y-1 pl-5 text-white/84">
+          <ul className="my-3 list-disc space-y-1 pl-5 text-white/78">
             {children}
           </ul>
         ),
         ol: ({ children }) => (
-          <ol className="my-3 list-decimal space-y-1 pl-5 text-white/84">
+          <ol className="my-3 list-decimal space-y-1 pl-5 text-white/78">
             {children}
           </ol>
         ),
-        li: ({ children }) => <li className="leading-7">{children}</li>,
-        strong: ({ children }) => (
-          <strong className="font-extrabold text-white">{children}</strong>
-        ),
-        em: ({ children }) => <em className="text-white/90">{children}</em>,
+        li: ({ children }) => <li className="leading-6">{children}</li>,
         a: ({ children, href }) => (
           <a
             href={href}
             target="_blank"
             rel="noreferrer"
-            className="text-sky-200 underline decoration-sky-200/35 underline-offset-4"
+            className="font-semibold text-sky-100 underline decoration-sky-100/30 underline-offset-4 transition hover:text-white"
           >
             {children}
           </a>
         ),
-        code: ({ children }) => (
-          <code className="rounded-md border border-white/10 bg-black/30 px-1.5 py-0.5 text-[0.92em] text-sky-100">
-            {children}
-          </code>
-        ),
         pre: ({ children }) => (
-          <pre className="my-3 overflow-x-auto rounded-xl border border-white/10 bg-black/35 p-3 text-sm">
+          <pre className="my-3 max-w-full overflow-x-auto rounded-lg border border-white/10 bg-black/34 p-3 text-sm leading-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
             {children}
           </pre>
         ),
-        blockquote: ({ children }) => (
-          <blockquote className="my-3 border-l-2 border-sky-200/40 pl-4 text-white/70">
-            {children}
-          </blockquote>
-        ),
+        code: ({ inline, children, ...props }) => {
+          const codeText = String(children);
+          const isInline = inline ?? !codeText.includes("\n");
+
+          if (isInline) {
+            return (
+              <code
+                className="rounded-md border border-white/10 bg-white/[0.075] px-1.5 py-0.5 text-[0.92em] font-semibold text-sky-100"
+                {...props}
+              >
+                {children}
+              </code>
+            );
+          }
+
+          return (
+            <code
+              className="block min-w-max whitespace-pre font-mono text-[0.92em] text-sky-50/86"
+              {...props}
+            >
+              {children}
+            </code>
+          );
+        },
       }}
     >
       {content}
@@ -128,259 +174,321 @@ function MarkdownMessage({ content }) {
   );
 }
 
+function MessageBubble({ message }) {
+  const isUser = message.role === "user";
+  const isThinking = !isUser && message.isStreaming && !message.content;
+
+  return (
+    <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
+      <div
+        className={`min-w-0 max-w-[86%] rounded-2xl px-4 py-3 text-sm font-medium leading-6 sm:max-w-[74%] ${
+          isUser
+            ? "rounded-br-md bg-white text-black shadow-[0_14px_40px_rgba(255,255,255,0.1)]"
+            : "rounded-bl-md border border-white/12 bg-white/[0.055] text-white/78 backdrop-blur"
+        }`}
+      >
+        {!isUser && (
+          <div className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.13em] text-sky-100/70">
+            <MessageSquare size={13} />
+            Unknown
+          </div>
+        )}
+        {isThinking ? (
+          <span className="inline-flex items-center gap-2">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-sky-100 shadow-[0_0_12px_rgba(186,230,253,0.7)]" />
+            Thinking through the SDG context...
+          </span>
+        ) : isUser ? (
+          message.content
+        ) : (
+          <MarkdownMessage content={message.content} />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ChatComposer({ value, onChange, onSend, disabled }) {
+  function handleSubmit(event) {
+    event.preventDefault();
+    onSend(value);
+  }
+
+  function handleKeyDown(event) {
+    if (event.key !== "Enter" || event.shiftKey) return;
+
+    event.preventDefault();
+    if (disabled || !value.trim()) return;
+    onSend(value);
+  }
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="rounded-2xl border border-sky-100/16 bg-[#050b16]/86 p-2 shadow-[0_22px_70px_rgba(0,0,0,0.38),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md"
+    >
+      <div className="flex items-end gap-2">
+        <textarea
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          onKeyDown={handleKeyDown}
+          rows={1}
+          disabled={disabled}
+          className="max-h-28 min-h-11 flex-1 resize-none rounded-xl border border-transparent bg-transparent px-3 py-2.5 text-sm font-medium leading-6 text-white outline-none placeholder:text-white/40 focus:border-sky-100/18 disabled:cursor-not-allowed disabled:opacity-60"
+          placeholder="Ask Unknown about SDGs, datasets, or sustainability actions..."
+        />
+        <button
+          type="submit"
+          disabled={disabled || !value.trim()}
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-white text-black shadow-[0_14px_38px_rgba(255,255,255,0.12)] transition hover:bg-sky-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-200 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+          aria-label="Send message"
+        >
+          <Send size={18} />
+        </button>
+      </div>
+    </form>
+  );
+}
+
 function ChatApp() {
-  const [messages, setMessages] = useState(starterMessages);
+  const shouldReduceMotion = useReducedMotion();
+  const abortControllerRef = useRef(null);
+  const [input, setInput] = useState("");
+  const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const hasConversation = messages.length > 0;
 
-  async function sendMessage(text) {
-    const trimmedText = text.trim();
-    if (!trimmedText || isLoading) return;
+  const hasMessages = messages.length > 0;
 
-    const nextMessages = [...messages, { role: "user", content: trimmedText }];
-    setMessages(nextMessages);
+  const welcomeMessages = useMemo(
+    () => [
+      {
+        role: "assistant",
+        content:
+          "Welcome. Ask Unknown can help frame SDG learning questions, dataset directions, and action ideas.",
+      },
+    ],
+    [],
+  );
+
+  async function sendMessage(rawText) {
+    const text = rawText.trim();
+    if (!text || isLoading) return;
+
+    const nextMessages = [...messages, { role: "user", content: text }];
+    const assistantIndex = nextMessages.length;
+    const abortController = new AbortController();
+
+    abortControllerRef.current = abortController;
+    setMessages([...nextMessages, { role: "assistant", content: "", isStreaming: true }]);
+    setInput("");
     setError("");
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: nextMessages }),
+      await streamDeepSeekReply(nextMessages, {
+        signal: abortController.signal,
+        onToken: (token) => {
+          setMessages((current) =>
+            current.map((message, index) =>
+              index === assistantIndex
+                ? { ...message, content: `${message.content}${token}` }
+                : message,
+            ),
+          );
+        },
       });
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || "AI API request failed.");
-      }
-
-      setMessages((current) => [
-        ...current,
-        { role: "assistant", content: data.reply },
-      ]);
-    } catch (apiError) {
-      setError(apiError instanceof Error ? apiError.message : "Request failed.");
+      setMessages((current) =>
+        current.map((message, index) =>
+          index === assistantIndex ? { ...message, isStreaming: false } : message,
+        ),
+      );
+    } catch (deepSeekError) {
+      setMessages((current) =>
+        current.reduce((nextMessages, message, index) => {
+          if (index !== assistantIndex) return [...nextMessages, message];
+          if (!message.content) return nextMessages;
+          return [...nextMessages, { ...message, isStreaming: false }];
+        }, []),
+      );
+      setError(
+        deepSeekError instanceof Error
+          ? deepSeekError.message
+          : "DeepSeek request failed. Please try again shortly.",
+      );
     } finally {
+      abortControllerRef.current = null;
       setIsLoading(false);
     }
   }
 
-  function resetThread() {
-    setMessages(starterMessages);
+  function stopStreaming() {
+    abortControllerRef.current?.abort();
+    setMessages((current) =>
+      current.map((message) =>
+        message.isStreaming ? { ...message, isStreaming: false } : message,
+      ),
+    );
+    setIsLoading(false);
+  }
+
+  function resetChat() {
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = null;
+    setMessages([]);
+    setInput("");
     setError("");
+    setIsLoading(false);
   }
 
   return (
-    <main className="grid h-dvh overflow-hidden bg-[#212121] text-white md:grid-cols-[292px_minmax(0,1fr)]">
-      <aside className="hidden min-h-0 border-r border-white/8 bg-[#181818] px-3 py-4 md:grid md:grid-rows-[auto_minmax(0,1fr)_auto]">
-        <div className="flex items-center justify-between px-2 pb-5">
-          <h1 className="text-xl font-extrabold tracking-normal">Unknown</h1>
-          <PanelLeft size={20} className="text-white/58" />
-        </div>
+    <main className="aurora-landing relative h-[100svh] overflow-hidden bg-[#02050b] text-white">
+      <StarfieldBackdrop />
 
-        <div className="min-h-0 overflow-hidden">
-          <nav className="grid gap-1">
-            {navItems.map((item, index) => {
-              const Icon = item.icon;
-              return (
-                <button
-                  key={item.label}
-                  type="button"
-                  onClick={index === 0 ? resetThread : undefined}
-                  className={`flex h-10 items-center gap-3 rounded-xl px-3 text-[15px] font-bold text-white/92 transition hover:bg-white/8 ${
-                    index === 0 ? "bg-white/10" : ""
-                  }`}
-                >
-                  <Icon size={19} strokeWidth={2} />
-                  {item.label}
-                </button>
-              );
-            })}
-          </nav>
-
-          <div className="mt-7 grid gap-2">
-            <p className="px-3 text-sm font-extrabold text-white/92">GPTs</p>
-            {gpts.map((item) => (
-              <button
-                key={item}
-                type="button"
-                className="flex h-10 items-center gap-3 rounded-xl px-3 text-[15px] font-semibold text-white/82 transition hover:bg-white/8"
-              >
-                <span className="grid h-6 w-6 place-items-center rounded-full bg-gradient-to-br from-sky-300 to-violet-500 text-[10px] font-extrabold text-white">
-                  U
-                </span>
-                <span className="truncate">{item}</span>
-              </button>
-            ))}
-          </div>
-
-          <div className="mt-8 grid gap-2">
-            <p className="px-3 text-sm font-extrabold text-white/92">
-              Projects
-            </p>
-            {projects.map((item) => {
-              const Icon = item.icon;
-              return (
-                <button
-                  key={item.label}
-                  type="button"
-                  className="flex h-10 items-center gap-3 rounded-xl px-3 text-[15px] font-semibold text-white/82 transition hover:bg-white/8"
-                >
-                  <Icon size={18} strokeWidth={2} />
-                  <span className="truncate">{item.label}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="mt-8 grid gap-2">
-            <p className="px-3 text-sm font-extrabold text-white/92">
-              Recents
-            </p>
-            {recents.map((item) => (
-              <button
-                key={item}
-                type="button"
-                className="flex h-9 items-center rounded-xl px-3 text-left text-sm font-semibold text-white/74 transition hover:bg-white/8"
-              >
-                <span className="truncate">{item}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="grid gap-2 border-t border-white/8 pt-3">
+      <section className="relative z-10 grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)] px-3 py-3 sm:px-5 lg:px-8">
+        <motion.header
+          initial={{ opacity: 0, y: shouldReduceMotion ? 0 : -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: shouldReduceMotion ? 0.16 : 0.42, ease: motionEase }}
+          className="mx-auto flex w-full max-w-7xl items-center justify-between border-b border-white/10 pb-3"
+        >
           <a
             href="./index.html"
-            className="flex h-10 items-center gap-3 rounded-xl px-3 text-sm font-bold text-white/78 transition hover:bg-white/8"
+            className="inline-flex items-center gap-2 rounded-lg px-1 py-2 text-sm font-bold text-white/68 transition hover:text-sky-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-200"
           >
             <ArrowLeft size={17} />
-            Back to hero
+            Back to Home
           </a>
-          <div className="flex items-center gap-3 rounded-xl px-3 py-2">
-            <UserCircle size={28} className="text-sky-200" />
-            <div className="min-w-0">
-              <p className="truncate text-sm font-extrabold">Bruni Liu</p>
-              <p className="text-xs font-semibold text-white/42">DeepSeek</p>
-            </div>
+          <div className="hidden items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-sky-100/62 sm:flex">
+            <ShieldCheck size={15} />
+            Educational prototype
           </div>
-        </div>
-      </aside>
-
-      <section className="grid h-dvh min-h-0 grid-rows-[auto_minmax(0,1fr)] bg-[#212121]">
-        <header className="flex h-14 items-center justify-between px-4 md:px-6">
-          <div className="flex items-center gap-3 md:hidden">
-            <button
-              type="button"
-              onClick={resetThread}
-              className="grid h-9 w-9 place-items-center rounded-xl bg-white/8 text-white/86"
-              aria-label="New chat"
-            >
-              <Plus size={19} />
-            </button>
-            <h1 className="text-base font-extrabold">Unknown</h1>
-          </div>
-          <div className="hidden items-center gap-2 text-sm font-semibold text-white/50 md:flex">
-            <MessageSquare size={16} />
-            Ask for Unknown
-          </div>
-          <a
-            href="./index.html"
-            className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-bold text-white/70 transition hover:bg-white/8"
+          <button
+            type="button"
+            onClick={resetChat}
+            className="inline-flex items-center gap-2 rounded-lg border border-white/12 bg-white/[0.04] px-3 py-2 text-sm font-bold text-white/66 transition hover:border-sky-100/30 hover:bg-white/[0.07] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-200"
           >
-            <ArrowLeft size={16} />
-            <span className="hidden sm:inline">Hero</span>
-          </a>
-        </header>
+            <Plus size={16} />
+            <span className="hidden sm:inline">New chat</span>
+          </button>
+        </motion.header>
 
-        <div className="relative grid min-h-0 grid-rows-[minmax(0,1fr)_auto]">
-          <Conversation className="min-h-0 px-4">
-            {!hasConversation ? (
-              <ConversationEmptyState className="pb-[11vh]">
-                <section className="grid w-full max-w-4xl gap-8">
-                  <h2 className="text-center text-3xl font-semibold leading-tight tracking-normal text-white md:text-4xl">
-                    Good to see you, Bruni.
-                  </h2>
-                  <AiChatInput
-                    disabled={isLoading}
-                    modeLabel="DeepSeek"
-                    placeholders={[
-                      "Ask anything",
-                      "Ask about your SDG project",
-                      "Draft an APA 7 reference",
-                      "Improve my carbon footprint response",
-                    ]}
-                    onSubmit={sendMessage}
-                  />
-                  <div className="mx-auto hidden max-w-4xl grid-cols-2 gap-3 lg:grid">
-                    {suggestions.map((suggestion) => (
-                      <button
-                        key={suggestion}
-                        type="button"
-                        onClick={() => sendMessage(suggestion)}
-                        className="rounded-2xl border border-white/8 bg-white/[0.035] px-4 py-3 text-left text-sm font-semibold leading-6 text-white/56 transition hover:bg-white/[0.06] hover:text-white/82"
-                      >
-                        {suggestion}
-                      </button>
-                    ))}
+        <div className="mx-auto grid h-full min-h-0 w-full max-w-7xl grid-rows-[auto_minmax(0,1fr)] gap-3 py-3 lg:grid-cols-[300px_minmax(0,1fr)] lg:grid-rows-1 lg:py-4">
+          <motion.aside
+            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: shouldReduceMotion ? 0.16 : 0.5, ease: motionEase }}
+            className="grid min-h-0 gap-3 lg:grid-rows-[auto_auto_minmax(0,1fr)]"
+          >
+            <div className="rounded-lg border border-sky-100/14 bg-[#020711]/72 p-4 shadow-[0_24px_80px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md sm:p-5 lg:p-4">
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-sky-100/62">
+                SDG Intelligence Hub
+              </p>
+              <h1 className="mt-3 text-2xl font-bold leading-tight text-white sm:text-3xl lg:text-2xl">
+                Ask Unknown
+              </h1>
+              <p className="mt-2 text-sm font-medium leading-relaxed text-white/62">
+                Explore sustainability questions through an educational AI
+                assistant.
+              </p>
+            </div>
+
+            <div className="hidden gap-2 rounded-lg border border-white/10 bg-white/[0.035] p-3 backdrop-blur lg:grid">
+              <p className="text-xs font-bold uppercase tracking-[0.14em] text-white/46">
+                Example prompts
+              </p>
+              {examplePrompts.map((prompt) => (
+                <button
+                  key={prompt}
+                  type="button"
+                  disabled={isLoading}
+                  onClick={() => sendMessage(prompt)}
+                  className="rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-left text-sm font-semibold leading-5 text-white/62 transition hover:border-sky-100/28 hover:bg-white/[0.06] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-200 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {prompt}
+                </button>
+              ))}
+            </div>
+
+            <div className="hidden min-h-0 gap-2 overflow-hidden lg:grid">
+              {capabilityCards.map((item) => {
+                const Icon = item.icon;
+
+                return (
+                  <div
+                    key={item.title}
+                    className="rounded-lg border border-white/10 bg-white/[0.035] p-3 backdrop-blur"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="grid h-9 w-9 place-items-center rounded-lg border border-cyan-100/14 bg-cyan-100/[0.07] text-sky-100">
+                        <Icon size={17} />
+                      </span>
+                      <div>
+                        <p className="text-sm font-bold text-white">{item.title}</p>
+                        <p className="mt-1 text-xs font-medium leading-5 text-white/48">
+                          {item.copy}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                </section>
-              </ConversationEmptyState>
-            ) : (
-              <>
-                <ConversationContent className="mx-auto w-full max-w-4xl gap-5 px-0 py-5">
-                  {messages.map((message, index) => (
-                    <Message
-                      key={`${message.role}-${index}`}
-                      from={message.role === "user" ? "user" : "assistant"}
-                    >
-                      <MessageContent>
-                        {message.role === "assistant" ? (
-                          <MarkdownMessage content={message.content} />
-                        ) : (
-                          message.content
-                        )}
-                      </MessageContent>
-                    </Message>
-                  ))}
-                  {isLoading && (
-                    <Message from="assistant">
-                      <MessageContent className="bg-[#303030] text-white/68">
-                        <span className="inline-flex items-center gap-2">
-                        <Loader2 size={16} className="animate-spin" />
-                        Unknown is thinking...
-                        </span>
-                      </MessageContent>
-                    </Message>
-                  )}
-                </ConversationContent>
-                <ConversationScrollButton className="bottom-5" />
-              </>
-            )}
-          </Conversation>
+                );
+              })}
+            </div>
+          </motion.aside>
 
-          {hasConversation && (
-            <div className="px-4 pb-5 pt-2">
+          <motion.div
+            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: shouldReduceMotion ? 0.16 : 0.5, ease: motionEase, delay: 0.04 }}
+            className="grid min-h-0 grid-rows-[minmax(0,1fr)_auto] overflow-hidden rounded-lg border border-sky-100/14 bg-[#030812]/72 shadow-[0_28px_90px_rgba(0,0,0,0.42),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md"
+          >
+            <div className="min-h-0 overflow-y-auto px-3 py-3 sm:px-5 sm:py-4">
+              {!hasMessages ? (
+                <EmptyState onPrompt={sendMessage} disabled={isLoading} />
+              ) : (
+                <div className="mx-auto grid max-w-4xl gap-4">
+                  {welcomeMessages.map((message, index) => (
+                    <MessageBubble key={`welcome-${index}`} message={message} />
+                  ))}
+                  {messages.map((message, index) => (
+                    <MessageBubble key={`${message.role}-${index}`} message={message} />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="border-t border-white/10 px-3 pb-3 pt-3 sm:px-5 sm:pb-4">
               <div className="mx-auto max-w-4xl">
                 {error && (
-                  <p className="mb-3 rounded-xl border border-red-400/20 bg-red-500/10 px-3 py-2 text-sm text-red-100">
+                  <p className="mb-2 rounded-lg border border-red-300/18 bg-red-500/[0.08] px-3 py-2 text-sm font-medium leading-5 text-red-100/86">
                     {error}
                   </p>
                 )}
-                <AiChatInput
+                <ChatComposer
+                  value={input}
+                  onChange={setInput}
+                  onSend={sendMessage}
                   disabled={isLoading}
-                  modeLabel="DeepSeek"
-                  placeholders={[
-                    "Ask anything",
-                    "Ask Unknown anything about your SDG project",
-                    "Give me APA 7 citation guidance",
-                  ]}
-                  onSubmit={sendMessage}
                 />
+                {isLoading && (
+                  <div className="mt-2 flex justify-center">
+                    <button
+                      type="button"
+                      onClick={stopStreaming}
+                      className="rounded-lg border border-white/14 bg-white/[0.04] px-3 py-1.5 text-xs font-bold text-white/62 transition hover:border-sky-100/30 hover:bg-white/[0.07] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-200"
+                    >
+                      Stop generating
+                    </button>
+                  </div>
+                )}
+                <p className="mt-2 text-center text-xs font-medium leading-5 text-white/42">
+                  This assistant is a learning prototype and does not provide
+                  official UN guidance.
+                </p>
               </div>
             </div>
-          )}
+          </motion.div>
         </div>
       </section>
     </main>

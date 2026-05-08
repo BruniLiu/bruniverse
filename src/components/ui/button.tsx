@@ -6,11 +6,16 @@ const variants = {
   outline:
     "border border-white/12 bg-[#2f2f2f] text-white shadow-lg shadow-black/20 hover:bg-[#3a3a3a]",
   ghost: "text-white/78 hover:bg-white/8 hover:text-white",
-};
+} as const;
 
 const sizes = {
   default: "h-10 px-4 py-2",
   icon: "h-9 w-9",
+} as const;
+
+type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: keyof typeof variants;
+  size?: keyof typeof sizes;
 };
 
 export function Button({
@@ -19,7 +24,7 @@ export function Button({
   size = "default",
   type = "button",
   ...props
-}) {
+}: ButtonProps) {
   return (
     <button
       type={type}

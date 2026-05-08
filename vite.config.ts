@@ -5,10 +5,12 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  assetsInclude: ["**/*.glb"],
   build: {
     rollupOptions: {
       input: {
         home: path.resolve(__dirname, "index.html"),
+        main: path.resolve(__dirname, "main.html"),
         chat: path.resolve(__dirname, "chat.html"),
       },
     },

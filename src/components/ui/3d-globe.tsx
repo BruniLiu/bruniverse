@@ -84,6 +84,17 @@ const DEFAULT_EARTH_TEXTURE =
 const DEFAULT_BUMP_TEXTURE =
   "https://unpkg.com/three-globe@2.31.0/example/img/earth-topology.png";
 
+const disabledCanvasEvents = () => ({
+  priority: 1,
+  enabled: false,
+  connected: undefined,
+  handlers: {},
+  connect: () => {},
+  disconnect: () => {},
+  update: () => {},
+  compute: () => {},
+});
+
 // ============================================================================
 // Utility Functions
 // ============================================================================
@@ -445,6 +456,7 @@ function Scene({ markers, config, onMarkerClick, onMarkerHover }: SceneProps) {
       {/* Controls */}
       <OrbitControls
         makeDefault
+        enableRotate={false}
         enablePan={config.enablePan}
         enableZoom={config.enableZoom}
         minDistance={config.minDistance}
@@ -533,6 +545,7 @@ export function Globe3D({
         style={{
           background: mergedConfig.backgroundColor || "transparent",
         }}
+        events={disabledCanvasEvents}
       >
         <Suspense fallback={<LoadingFallback />}>
           <Scene

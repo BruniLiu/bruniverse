@@ -37,10 +37,6 @@ uniform float uBandSpread;
 uniform float uOctaveDecay;
 uniform float uLayerOffset;
 uniform float uColorSpeed;
-uniform vec2 uMouse;
-uniform float uMouseInfluence;
-uniform bool uEnableMouse;
-
 #define TAU 6.28318
 
 vec3 gradientHash(vec3 p) {
@@ -128,14 +124,9 @@ void main() {
   vec2 uv = gl_FragCoord.xy / uResolution.xy;
   float t = uSpeed * 0.4 * uTime;
 
-  vec2 shift = vec2(0.0);
-  if (uEnableMouse) {
-    shift = (uMouse - 0.5) * uMouseInfluence;
-  }
-
   vec3 col = vec3(0.0);
-  col += 0.99 * auroraGlow(t, shift) * cosineGradient(uv.x + uTime * uSpeed * 0.2 * uColorSpeed, vec3(0.5), vec3(0.5), vec3(1.0), vec3(0.3, 0.20, 0.20)) * uColor1;
-  col += 0.99 * auroraGlow(t + uLayerOffset, shift) * cosineGradient(uv.x + uTime * uSpeed * 0.1 * uColorSpeed, vec3(0.5), vec3(0.5), vec3(2.0, 1.0, 0.0), vec3(0.5, 0.20, 0.25)) * uColor2;
+  col += 0.99 * auroraGlow(t, vec2(0.0)) * cosineGradient(uv.x + uTime * uSpeed * 0.2 * uColorSpeed, vec3(0.5), vec3(0.5), vec3(1.0), vec3(0.3, 0.20, 0.20)) * uColor1;
+  col += 0.99 * auroraGlow(t + uLayerOffset, vec2(0.0)) * cosineGradient(uv.x + uTime * uSpeed * 0.1 * uColorSpeed, vec3(0.5), vec3(0.5), vec3(2.0, 1.0, 0.0), vec3(0.5, 0.20, 0.25)) * uColor2;
 
   col *= uBrightness;
   float alpha = clamp(length(col), 0.0, 1.0);
@@ -156,8 +147,6 @@ export default function SoftAurora({
   octaveDecay = 0.1,
   layerOffset = 0,
   colorSpeed = 1.0,
-  enableMouseInteraction = true,
-  mouseInfluence = 0.25,
 }) {
   const containerRef = useRef(null);
 
@@ -172,20 +161,6 @@ export default function SoftAurora({
     gl.canvas.style.height = "100%";
 
     let program;
-    const currentMouse = [0.5, 0.5];
-    let targetMouse = [0.5, 0.5];
-
-    function handleMouseMove(e) {
-      const rect = gl.canvas.getBoundingClientRect();
-      targetMouse = [
-        (e.clientX - rect.left) / rect.width,
-        1.0 - (e.clientY - rect.top) / rect.height,
-      ];
-    }
-
-    function handleMouseLeave() {
-      targetMouse = [0.5, 0.5];
-    }
 
     function resize() {
       renderer.setSize(container.offsetWidth, container.offsetHeight);
@@ -221,35 +196,17 @@ export default function SoftAurora({
         uOctaveDecay: { value: octaveDecay },
         uLayerOffset: { value: layerOffset },
         uColorSpeed: { value: colorSpeed },
-        uMouse: { value: new Float32Array([0.5, 0.5]) },
-        uMouseInfluence: { value: mouseInfluence },
-        uEnableMouse: { value: enableMouseInteraction },
       },
     });
 
     const mesh = new Mesh(gl, { geometry, program });
     container.appendChild(gl.canvas);
 
-    if (enableMouseInteraction) {
-      gl.canvas.addEventListener("mousemove", handleMouseMove);
-      gl.canvas.addEventListener("mouseleave", handleMouseLeave);
-    }
-
     let animationFrameId;
 
     function update(time) {
       animationFrameId = requestAnimationFrame(update);
       program.uniforms.uTime.value = time * 0.001;
-
-      if (enableMouseInteraction) {
-        currentMouse[0] += 0.05 * (targetMouse[0] - currentMouse[0]);
-        currentMouse[1] += 0.05 * (targetMouse[1] - currentMouse[1]);
-        program.uniforms.uMouse.value[0] = currentMouse[0];
-        program.uniforms.uMouse.value[1] = currentMouse[1];
-      } else {
-        program.uniforms.uMouse.value[0] = 0.5;
-        program.uniforms.uMouse.value[1] = 0.5;
-      }
 
       renderer.render({ scene: mesh });
     }
@@ -258,10 +215,6 @@ export default function SoftAurora({
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener("resize", resize);
-      if (enableMouseInteraction) {
-        gl.canvas.removeEventListener("mousemove", handleMouseMove);
-        gl.canvas.removeEventListener("mouseleave", handleMouseLeave);
-      }
       if (container.contains(gl.canvas)) {
         container.removeChild(gl.canvas);
       }
@@ -280,8 +233,6 @@ export default function SoftAurora({
     octaveDecay,
     layerOffset,
     colorSpeed,
-    enableMouseInteraction,
-    mouseInfluence,
   ]);
 
   return <div ref={containerRef} className="h-full w-full" />;

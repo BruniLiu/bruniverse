@@ -1,0 +1,12 @@
+.lanyard-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.lanyard-wrapper canvas {
+  display: block;
+}
