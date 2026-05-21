@@ -1,5 +1,5 @@
 import React, { Children, useLayoutEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 export default function Stepper({
   children,
@@ -15,6 +15,7 @@ export default function Stepper({
   canProceed = () => true,
   ...rest
 }) {
+  const shouldReduceMotion = useReducedMotion();
   const [currentStep, setCurrentStep] = useState(initialStep);
   const [direction, setDirection] = useState(0);
   const stepsArray = Children.toArray(children);
@@ -80,6 +81,7 @@ export default function Stepper({
           isCompleted={isCompleted}
           currentStep={currentStep}
           direction={direction}
+          shouldReduceMotion={shouldReduceMotion}
           className="px-0"
         >
           {stepsArray[currentStep - 1]}
@@ -112,14 +114,25 @@ export default function Stepper({
   );
 }
 
-function StepContentWrapper({ isCompleted, currentStep, direction, children, className }) {
+function StepContentWrapper({
+  isCompleted,
+  currentStep,
+  direction,
+  shouldReduceMotion,
+  children,
+  className,
+}) {
   const [parentHeight, setParentHeight] = useState(0);
 
   return (
     <motion.div
       style={{ position: "relative", overflow: "hidden" }}
       animate={{ height: isCompleted ? 0 : parentHeight }}
-      transition={{ type: "spring", duration: 0.38, bounce: 0 }}
+      transition={{
+        type: "spring",
+        duration: shouldReduceMotion ? 0.01 : isCompleted ? 0.2 : 0.38,
+        bounce: 0,
+      }}
       className={className}
     >
       <AnimatePresence initial={false} mode="sync" custom={direction}>
@@ -127,6 +140,7 @@ function StepContentWrapper({ isCompleted, currentStep, direction, children, cla
           <SlideTransition
             key={currentStep}
             direction={direction}
+            shouldReduceMotion={shouldReduceMotion}
             onHeightReady={(height) => setParentHeight(height)}
           >
             {children}
@@ -137,7 +151,7 @@ function StepContentWrapper({ isCompleted, currentStep, direction, children, cla
   );
 }
 
-function SlideTransition({ children, direction, onHeightReady }) {
+function SlideTransition({ children, direction, shouldReduceMotion, onHeightReady }) {
   const containerRef = useRef(null);
 
   useLayoutEffect(() => {
@@ -148,11 +162,11 @@ function SlideTransition({ children, direction, onHeightReady }) {
     <motion.div
       ref={containerRef}
       custom={direction}
-      variants={stepVariants}
+      variants={shouldReduceMotion ? reducedStepVariants : stepVariants}
       initial="enter"
       animate="center"
       exit="exit"
-      transition={{ duration: 0.28, ease: [0.23, 1, 0.32, 1] }}
+      transition={{ duration: shouldReduceMotion ? 0.01 : 0.28, ease: [0.23, 1, 0.32, 1] }}
       style={{ position: "absolute", left: 0, right: 0, top: 0 }}
     >
       {children}
@@ -173,6 +187,12 @@ const stepVariants = {
     x: direction >= 0 ? "-10%" : "10%",
     opacity: 0,
   }),
+};
+
+const reducedStepVariants = {
+  enter: { opacity: 1, x: "0%" },
+  center: { opacity: 1, x: "0%" },
+  exit: { opacity: 1, x: "0%" },
 };
 
 export function Step({ children }) {
@@ -207,15 +227,15 @@ function StepIndicator({ step, currentStep, onClickStep, disableStepIndicators }
           },
           active: {
             scale: 1,
-            backgroundColor: "rgba(186,230,253,0.14)",
-            borderColor: "rgba(186,230,253,0.52)",
-            color: "rgba(224,242,254,0.95)",
+            backgroundColor: "rgba(199,210,254,0.16)",
+            borderColor: "rgba(165,180,252,0.52)",
+            color: "rgba(224,231,255,0.95)",
           },
           complete: {
             scale: 1,
-            backgroundColor: "rgba(45,212,191,0.18)",
-            borderColor: "rgba(125,211,252,0.46)",
-            color: "rgba(204,251,241,0.95)",
+            backgroundColor: "rgba(129,140,248,0.2)",
+            borderColor: "rgba(165,180,252,0.5)",
+            color: "rgba(224,231,255,0.95)",
           },
         }}
         transition={{ duration: 0.25 }}
@@ -237,7 +257,7 @@ function StepConnector({ isComplete }) {
   return (
     <div className="relative mx-1 h-px flex-1 overflow-hidden rounded bg-white/12 sm:mx-2">
       <motion.div
-        className="absolute left-0 top-0 h-full bg-gradient-to-r from-cyan-100/80 to-teal-200/54"
+        className="absolute left-0 top-0 h-full bg-gradient-to-r from-indigo-300/70 to-sky-300/50"
         initial={false}
         animate={{ width: isComplete ? "100%" : "0%" }}
         transition={{ duration: 0.32 }}

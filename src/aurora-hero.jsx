@@ -2,7 +2,9 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { motion, useReducedMotion } from "framer-motion";
 import { Globe3D } from "@/components/ui/3d-globe";
+import PageTransition from "./components/motion/PageTransition";
 import SoftAurora from "./components/react-bits/SoftAurora";
+import ThemeToggle from "./components/theme/ThemeToggle";
 import "./react.css";
 
 const motionEase = [0.23, 1, 0.32, 1];
@@ -297,7 +299,7 @@ function HeroOrbitalVisual({ shouldReduceMotion }) {
             <div className="relative flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-cyan-100 shadow-[0_0_16px_rgba(125,211,252,0.8)]" />
               <span className={`${node.line} h-px bg-gradient-to-r from-cyan-100/46 to-transparent`} />
-              <span className="rounded-full border border-cyan-100/18 bg-[#020711]/58 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.13em] text-sky-100/80 shadow-[0_12px_48px_rgba(8,47,73,0.28)] backdrop-blur-md">
+              <span className="rounded-full border border-indigo-200/18 bg-[#090918]/58 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.13em] text-indigo-100/80 shadow-[0_12px_48px_rgba(49,46,129,0.28)] backdrop-blur-md">
                 {node.label}
               </span>
             </div>
@@ -317,7 +319,8 @@ function App() {
   const sectionReveal = revealVariant(shouldReduceMotion, 20, 0.99);
 
   return (
-    <main className="aurora-landing relative min-h-dvh overflow-x-clip bg-[#02050b] text-white">
+    <PageTransition transitionKey="landing" shouldReduceMotion={shouldReduceMotion}>
+      <main className="aurora-landing relative min-h-dvh overflow-x-clip bg-[#06060f] text-white">
       <div
         className="pointer-events-none absolute inset-[-5vh] z-0"
       >
@@ -328,22 +331,22 @@ function App() {
           <SoftAurora
             speed={0.6}
             scale={1.5}
-            brightness={1}
-            color1="#dbeafe"
-            color2="#2563eb"
+            brightness={1.05}
+            color1="#e0e7ff"
+            color2="#6366f1"
             noiseFrequency={2.5}
             noiseAmplitude={1}
             bandHeight={0.5}
             bandSpread={1}
             octaveDecay={0.1}
-            layerOffset={0}
+            layerOffset={0.8}
             colorSpeed={1}
           />
         </div>
 
         <div className="hero-starfield hero-starfield-far pointer-events-none absolute inset-0" />
         <div className="hero-starfield hero-starfield-near pointer-events-none absolute inset-0" />
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_72%_46%,rgba(37,99,235,0.18)_0%,rgba(14,165,233,0.08)_22%,transparent_48%),radial-gradient(circle_at_50%_68%,rgba(56,189,248,0.08)_0%,transparent_42%),radial-gradient(circle_at_50%_50%,transparent_0%,rgba(2,5,11,0.32)_48%,rgba(2,5,11,0.9)_100%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_72%_46%,rgba(99,102,241,0.16)_0%,rgba(56,189,248,0.07)_22%,transparent_48%),radial-gradient(circle_at_50%_68%,rgba(129,140,248,0.07)_0%,transparent_42%),radial-gradient(circle_at_50%_50%,transparent_0%,rgba(6,6,15,0.32)_48%,rgba(6,6,15,0.92)_100%)]" />
         <div className="noise-overlay pointer-events-none absolute inset-0 opacity-[0.1] mix-blend-screen" />
       </div>
 
@@ -351,7 +354,7 @@ function App() {
         id="home"
         className="relative z-10 min-h-[100svh] overflow-x-clip"
       >
-        <div className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(circle_at_74%_42%,rgba(96,165,250,0.22)_0%,rgba(14,165,233,0.1)_22%,transparent_48%)]" />
+        <div className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(circle_at_74%_42%,rgba(129,140,248,0.2)_0%,rgba(56,189,248,0.08)_22%,transparent_48%)]" />
         <div
           className="pointer-events-none absolute bottom-[-8svh] left-1/2 z-[3] h-[54svh] min-h-[330px] w-[min(760px,130vw)] -translate-x-1/2 opacity-90 sm:bottom-[-12vh] sm:h-[84vh] sm:min-h-[560px] sm:w-[min(980px,132vw)] sm:opacity-95 md:bottom-[-6vh] md:left-auto md:right-[-18vw] md:h-[96vh] md:w-[min(1180px,90vw)] md:translate-x-0 lg:right-[-12vw] xl:right-[-8vw]"
           style={{
@@ -369,8 +372,8 @@ function App() {
             animate={{ opacity: 1, transform: "scale(1) translate3d(0, 0, 0)" }}
             transition={{ duration: shouldReduceMotion ? 0.18 : 0.8, ease: motionEase }}
           >
-            <div className="pointer-events-none absolute inset-x-[5%] top-[14%] h-[36%] rounded-[999px] bg-[radial-gradient(ellipse_at_center,rgba(224,242,254,0.48)_0%,rgba(56,189,248,0.28)_30%,rgba(37,99,235,0.16)_52%,transparent_74%)] blur-3xl" />
-            <div className="pointer-events-none absolute inset-x-[14%] top-[23%] h-[18%] rounded-[999px] bg-cyan-100/20 blur-2xl mix-blend-screen" />
+            <div className="pointer-events-none absolute inset-x-[5%] top-[14%] h-[36%] rounded-[999px] bg-[radial-gradient(ellipse_at_center,rgba(224,231,255,0.44)_0%,rgba(129,140,248,0.24)_30%,rgba(99,102,241,0.14)_52%,transparent_74%)] blur-3xl" />
+            <div className="pointer-events-none absolute inset-x-[14%] top-[23%] h-[18%] rounded-[999px] bg-indigo-200/18 blur-2xl mix-blend-screen" />
             <div className="relative h-full w-full">
               <HeroOrbitalVisual shouldReduceMotion={shouldReduceMotion} />
               <Globe3D
@@ -420,9 +423,12 @@ function App() {
                 </a>
               ))}
             </nav>
-            <span className="text-right text-sky-100/76">
-              VBE 1014
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="hidden text-right text-sky-100/76 sm:inline">
+                VBE 1014
+              </span>
+              <ThemeToggle />
+            </div>
           </motion.header>
 
           <div className="mx-auto grid w-full max-w-7xl items-start gap-4 py-4 sm:flex-1 sm:items-center sm:gap-6 sm:py-6 lg:grid-cols-[minmax(0,0.98fr)_minmax(300px,0.62fr)] lg:py-4">
@@ -513,7 +519,7 @@ function App() {
         shouldReduceMotion={shouldReduceMotion}
         sectionGroup={sectionGroup}
         sectionReveal={sectionReveal}
-        className="border-y border-white/10 bg-[#030812]/78 backdrop-blur-sm"
+        className="border-y border-white/10 bg-[#0a0a1a]/78 backdrop-blur-sm"
       >
         <motion.div
           variants={sectionGroup}
@@ -624,7 +630,7 @@ function App() {
         shouldReduceMotion={shouldReduceMotion}
         sectionGroup={sectionGroup}
         sectionReveal={sectionReveal}
-        className="bg-[#030812]/58"
+        className="bg-[#0a0a1a]/58"
       >
         <motion.div
           variants={sectionGroup}
@@ -718,7 +724,7 @@ function App() {
         shouldReduceMotion={shouldReduceMotion}
         sectionGroup={sectionGroup}
         sectionReveal={sectionReveal}
-        className="border-y border-white/10 bg-[#030812]/66"
+        className="border-y border-white/10 bg-[#0a0a1a]/66"
       >
         <motion.div
           variants={sectionGroup}
@@ -823,7 +829,8 @@ function App() {
           </div>
         </div>
       </footer>
-    </main>
+      </main>
+    </PageTransition>
   );
 }
 

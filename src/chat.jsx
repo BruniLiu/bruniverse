@@ -15,6 +15,8 @@ import {
   Sparkles,
 } from "lucide-react";
 import { streamDeepSeekReply } from "./lib/deepseek";
+import PageTransition from "./components/motion/PageTransition";
+import ThemeToggle from "./components/theme/ThemeToggle";
 import "./react.css";
 
 const motionEase = [0.23, 1, 0.32, 1];
@@ -49,7 +51,7 @@ function StarfieldBackdrop() {
     <div className="pointer-events-none absolute inset-[-5vh] z-0 overflow-hidden">
       <div className="hero-starfield hero-starfield-far absolute inset-0 opacity-45" />
       <div className="hero-starfield hero-starfield-near absolute inset-0 opacity-30" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(37,99,235,0.2)_0%,rgba(14,165,233,0.09)_25%,transparent_52%),radial-gradient(circle_at_18%_78%,rgba(20,184,166,0.11)_0%,transparent_42%),radial-gradient(circle_at_center,rgba(2,5,11,0.18)_0%,rgba(2,5,11,0.94)_76%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(99,102,241,0.18)_0%,rgba(56,189,248,0.08)_25%,transparent_52%),radial-gradient(circle_at_18%_78%,rgba(129,140,248,0.1)_0%,transparent_42%),radial-gradient(circle_at_center,rgba(6,6,15,0.18)_0%,rgba(6,6,15,0.94)_76%)]" />
       <div className="noise-overlay absolute inset-0 opacity-[0.08] mix-blend-screen" />
     </div>
   );
@@ -174,12 +176,17 @@ function MarkdownMessage({ content }) {
   );
 }
 
-function MessageBubble({ message }) {
+function MessageBubble({ message, shouldReduceMotion }) {
   const isUser = message.role === "user";
   const isThinking = !isUser && message.isStreaming && !message.content;
 
   return (
-    <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
+    <motion.div
+      className={`flex ${isUser ? "justify-end" : "justify-start"}`}
+      initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 8, scale: 0.99 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: shouldReduceMotion ? 0.01 : 0.24, ease: motionEase }}
+    >
       <div
         className={`min-w-0 max-w-[86%] rounded-2xl px-4 py-3 text-sm font-medium leading-6 sm:max-w-[74%] ${
           isUser
@@ -204,7 +211,7 @@ function MessageBubble({ message }) {
           <MarkdownMessage content={message.content} />
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -225,7 +232,7 @@ function ChatComposer({ value, onChange, onSend, disabled }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-2xl border border-sky-100/16 bg-[#050b16]/86 p-2 shadow-[0_22px_70px_rgba(0,0,0,0.38),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md"
+      className="rounded-2xl border border-sky-100/16 bg-[#0b0b1c]/86 p-2 shadow-[0_22px_70px_rgba(0,0,0,0.38),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md"
     >
       <div className="flex items-end gap-2">
         <textarea
@@ -343,8 +350,9 @@ function ChatApp() {
   }
 
   return (
-    <main className="aurora-landing relative h-[100svh] overflow-hidden bg-[#02050b] text-white">
-      <StarfieldBackdrop />
+    <PageTransition transitionKey="chat" shouldReduceMotion={shouldReduceMotion}>
+      <main className="aurora-landing relative h-[100svh] overflow-hidden bg-[#06060f] text-white">
+        <StarfieldBackdrop />
 
       <section className="relative z-10 grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)] px-3 py-3 sm:px-5 lg:px-8">
         <motion.header
@@ -364,14 +372,17 @@ function ChatApp() {
             <ShieldCheck size={15} />
             Educational prototype
           </div>
-          <button
-            type="button"
-            onClick={resetChat}
-            className="inline-flex items-center gap-2 rounded-lg border border-white/12 bg-white/[0.04] px-3 py-2 text-sm font-bold text-white/66 transition hover:border-sky-100/30 hover:bg-white/[0.07] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-200"
-          >
-            <Plus size={16} />
-            <span className="hidden sm:inline">New chat</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={resetChat}
+              className="inline-flex items-center gap-2 rounded-lg border border-white/12 bg-white/[0.04] px-3 py-2 text-sm font-bold text-white/66 transition hover:border-sky-100/30 hover:bg-white/[0.07] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-200"
+            >
+              <Plus size={16} />
+              <span className="hidden sm:inline">New chat</span>
+            </button>
+            <ThemeToggle />
+          </div>
         </motion.header>
 
         <div className="mx-auto grid h-full min-h-0 w-full max-w-7xl grid-rows-[auto_minmax(0,1fr)] gap-3 py-3 lg:grid-cols-[300px_minmax(0,1fr)] lg:grid-rows-1 lg:py-4">
@@ -381,7 +392,7 @@ function ChatApp() {
             transition={{ duration: shouldReduceMotion ? 0.16 : 0.5, ease: motionEase }}
             className="grid min-h-0 gap-3 lg:grid-rows-[auto_auto_minmax(0,1fr)]"
           >
-            <div className="rounded-lg border border-sky-100/14 bg-[#020711]/72 p-4 shadow-[0_24px_80px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md sm:p-5 lg:p-4">
+            <div className="rounded-lg border border-sky-100/14 bg-[#090918]/72 p-4 shadow-[0_24px_80px_rgba(0,0,0,0.32),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md sm:p-5 lg:p-4">
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-sky-100/62">
                 SDG Intelligence Hub
               </p>
@@ -441,7 +452,7 @@ function ChatApp() {
             initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: shouldReduceMotion ? 0.16 : 0.5, ease: motionEase, delay: 0.04 }}
-            className="grid min-h-0 grid-rows-[minmax(0,1fr)_auto] overflow-hidden rounded-lg border border-sky-100/14 bg-[#030812]/72 shadow-[0_28px_90px_rgba(0,0,0,0.42),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md"
+            className="grid min-h-0 grid-rows-[minmax(0,1fr)_auto] overflow-hidden rounded-lg border border-sky-100/14 bg-[#0a0a1a]/72 shadow-[0_28px_90px_rgba(0,0,0,0.42),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md"
           >
             <div className="min-h-0 overflow-y-auto px-3 py-3 sm:px-5 sm:py-4">
               {!hasMessages ? (
@@ -449,10 +460,18 @@ function ChatApp() {
               ) : (
                 <div className="mx-auto grid max-w-4xl gap-4">
                   {welcomeMessages.map((message, index) => (
-                    <MessageBubble key={`welcome-${index}`} message={message} />
+                    <MessageBubble
+                      key={`welcome-${index}`}
+                      message={message}
+                      shouldReduceMotion={shouldReduceMotion}
+                    />
                   ))}
                   {messages.map((message, index) => (
-                    <MessageBubble key={`${message.role}-${index}`} message={message} />
+                    <MessageBubble
+                      key={`${message.role}-${index}`}
+                      message={message}
+                      shouldReduceMotion={shouldReduceMotion}
+                    />
                   ))}
                 </div>
               )}
@@ -491,7 +510,8 @@ function ChatApp() {
           </motion.div>
         </div>
       </section>
-    </main>
+      </main>
+    </PageTransition>
   );
 }
 
