@@ -5,6 +5,7 @@ import { Globe3D } from "@/components/ui/3d-globe";
 import PageTransition from "./components/motion/PageTransition";
 import SoftAurora from "./components/react-bits/SoftAurora";
 import ThemeToggle from "./components/theme/ThemeToggle";
+import { allSdgGoals, apaReferences, sdgAgenda, teamMembers, tenActNowActions } from "./pages/siteData";
 import "./react.css";
 
 const motionEase = [0.23, 1, 0.32, 1];
@@ -42,12 +43,12 @@ function staggerVariant(shouldReduceMotion, stagger = 0.07, delay = 0.04) {
 
 const navItems = [
   { label: "Home", href: "#home" },
-  { label: "Explore SDGs", href: "#explore-sdgs" },
+  { label: "SDG 17 Goals", href: "./sdg-goals.html" },
   { label: "Asking", href: "#asking" },
   { label: "Dataset Hub", href: "#dataset-hub" },
-  { label: "SDG Act Now", href: "#sdg-act-now" },
-  { label: "About Us", href: "#about-us" },
-  { label: "Reference List", href: "#reference-list" },
+  { label: "SDG Act Now", href: "./act-now.html" },
+  { label: "About Us", href: "./about-us.html" },
+  { label: "Reference List", href: "./reference-list.html" },
 ];
 
 const platformFeatures = [
@@ -78,21 +79,25 @@ const selectedGoals = [
     number: "SDG 4",
     title: "Quality Education",
     copy: "Advance inclusive learning opportunities that help communities build long-term resilience.",
+    href: "./sdg-4.html",
   },
   {
     number: "SDG 13",
     title: "Climate Action",
     copy: "Understand climate risks, mitigation choices, and adaptation pathways for a warming planet.",
+    href: "./sdg-13.html",
   },
   {
     number: "SDG 3",
     title: "Good Health and Well-being",
     copy: "Explore how public health systems, prevention, and equity shape sustainable societies.",
+    href: "./sdg-3.html",
   },
   {
     number: "SDG 16",
     title: "Peace, Justice and Strong Institutions",
     copy: "Connect justice, accountable institutions, and peacebuilding to sustainable development.",
+    href: "./sdg-16.html",
   },
 ];
 
@@ -140,19 +145,6 @@ const datasetCategories = [
     title: "General SDG Data Portals",
     copy: "Cross-goal portals for comparing indicators across regions, themes, and timelines.",
   },
-];
-
-const actNowActions = [
-  "Save energy",
-  "Use public transport",
-  "Eat more vegetables",
-  "Reduce waste",
-  "Recycle",
-  "Speak up",
-  "Conserve water",
-  "Choose sustainable products",
-  "Repair and reuse",
-  "Share SDG knowledge",
 ];
 
 const orbitalNodes = [
@@ -412,7 +404,7 @@ function App() {
             <a href="./index.html" className="text-white/90 transition hover:text-white">
               Bruniverse
             </a>
-            <nav className="hidden items-center gap-5 text-white/58 md:flex lg:gap-7">
+            <nav className="hidden items-center gap-5 text-white/58 lg:flex lg:gap-7">
               {navItems.map((item) => (
                 <a
                   key={item.href}
@@ -554,6 +546,71 @@ function App() {
 
         <motion.div
           variants={sectionGroup}
+          className="mt-14 grid gap-4 lg:grid-cols-[0.92fr_1.08fr]"
+        >
+          <GlassCard
+            variants={cardReveal}
+            shouldReduceMotion={shouldReduceMotion}
+            className="min-h-[260px] bg-black/24"
+          >
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-sky-100/62">
+              {sdgAgenda.title}
+            </p>
+            <h3 className="mt-7 text-3xl font-bold leading-tight text-white">
+              A shared 2030 plan for people, planet, prosperity, peace, and partnership.
+            </h3>
+            <p className="mt-5 text-sm font-medium leading-6 text-white/62">
+              {sdgAgenda.summary}
+            </p>
+          </GlassCard>
+
+          <GlassCard
+            variants={cardReveal}
+            shouldReduceMotion={shouldReduceMotion}
+            className="min-h-[260px] bg-sky-100/[0.045]"
+          >
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-sky-100/62">
+              Why the world needs SDG guidance
+            </p>
+            <p className="mt-7 text-base font-medium leading-7 text-white/68">
+              {sdgAgenda.whyGuidanceMatters}
+            </p>
+            <CardLink href="./sdg-goals.html">Open SDG 17 Goals Page</CardLink>
+          </GlassCard>
+        </motion.div>
+
+        <motion.div variants={sectionReveal} className="mt-16 mb-7">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-sky-100/60">
+            Complete list of the 17 goals
+          </p>
+        </motion.div>
+
+        <motion.div
+          variants={sectionGroup}
+          className="grid gap-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
+        >
+          {allSdgGoals.map((goal) => (
+            <motion.a
+              key={goal.number}
+              variants={cardReveal}
+              href="./sdg-goals.html#all-goals"
+              className="group rounded-lg border border-white/10 bg-white/[0.035] p-4 transition hover:border-sky-100/24 hover:bg-white/[0.06]"
+            >
+              <p className="font-mono text-xs font-bold tabular-nums text-white/28">
+                SDG {goal.number}
+              </p>
+              <h3 className="mt-3 text-base font-bold leading-tight text-white group-hover:text-sky-100">
+                {goal.title}
+              </h3>
+              <p className="mt-2 text-xs font-medium leading-5 text-white/46">
+                {goal.summary}
+              </p>
+            </motion.a>
+          ))}
+        </motion.div>
+
+        <motion.div
+          variants={sectionGroup}
           className="mt-14 grid gap-4 md:grid-cols-2 xl:grid-cols-4"
         >
           {selectedGoals.map((goal) => (
@@ -572,7 +629,7 @@ function App() {
               <p className="mt-4 text-sm font-medium leading-6 text-white/62">
                 {goal.copy}
               </p>
-              <CardLink href="#">Explore Goal</CardLink>
+              <CardLink href={goal.href}>Explore Goal</CardLink>
             </GlassCard>
           ))}
         </motion.div>
@@ -697,7 +754,7 @@ function App() {
               Ten practical actions
             </p>
             <div className="mt-6 grid gap-2 sm:grid-cols-2">
-              {actNowActions.map((action) => (
+              {tenActNowActions.map((action) => (
                 <div
                   key={action}
                   className="rounded-lg border border-white/10 bg-black/20 px-3 py-3 text-sm font-bold text-white/72"
@@ -707,7 +764,7 @@ function App() {
               ))}
             </div>
             <a
-              href="#"
+              href="./act-now.html"
               className="mt-8 inline-flex rounded-lg bg-white px-5 py-3 text-sm font-bold text-black shadow-[0_18px_48px_rgba(255,255,255,0.14)] transition hover:-translate-y-0.5 hover:bg-sky-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-200"
             >
               Calculate Your Footprint
@@ -719,8 +776,8 @@ function App() {
       <SectionShell
         id="about-us"
         eyebrow="About us"
-        title="An educational sustainability platform for university learning."
-        copy="This project combines SDG learning, AI-assisted questioning, research datasets, and practical actions in one coherent academic environment for students, educators, and early-stage researchers."
+        title="Meet the project contributor."
+        copy="The About Us page records member identity, background, future vocation aspirations, selected SDG research, and design contribution for the assessment."
         shouldReduceMotion={shouldReduceMotion}
         sectionGroup={sectionGroup}
         sectionReveal={sectionReveal}
@@ -728,26 +785,63 @@ function App() {
       >
         <motion.div
           variants={sectionGroup}
-          className="grid gap-3 md:grid-cols-3"
+          className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]"
         >
-          {["Students", "Educators", "Researchers"].map((audience) => (
+          {teamMembers.map((member) => (
             <GlassCard
-              key={audience}
+              key={member.name}
               variants={cardReveal}
               shouldReduceMotion={shouldReduceMotion}
+              className="min-h-[320px]"
             >
-              <p className="text-xs font-bold uppercase tracking-[0.16em] text-sky-100/62">
-                Designed for
-              </p>
-              <h3 className="mt-5 text-2xl font-bold leading-tight text-white">
-                {audience}
-              </h3>
-              <p className="mt-4 text-sm font-medium leading-6 text-white/62">
-                A focused space to connect global goals with guided inquiry,
-                credible evidence, and everyday sustainability decisions.
-              </p>
+              <div className="grid h-full gap-7 sm:grid-cols-[128px_1fr] sm:items-start">
+                <div className="grid aspect-square place-items-center rounded-lg border border-white/12 bg-[radial-gradient(circle_at_30%_24%,rgba(186,230,253,0.22),transparent_36%),linear-gradient(135deg,rgba(15,23,42,0.86),rgba(30,41,59,0.44))]">
+                  <span className="grid h-20 w-20 place-items-center rounded-full border border-sky-100/22 bg-white/[0.07] text-2xl font-extrabold text-sky-100/80">
+                    {member.initials}
+                  </span>
+                </div>
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-sky-100/62">
+                    {member.role}
+                  </p>
+                  <h3 className="mt-4 text-3xl font-bold leading-tight text-white">
+                    {member.name}
+                  </h3>
+                  <p className="mt-2 text-sm font-semibold text-white/44">
+                    English name: {member.englishName}
+                  </p>
+                  <p className="mt-5 text-sm font-medium leading-6 text-white/62">
+                    {member.background}
+                  </p>
+                  <p className="mt-4 text-sm font-medium leading-6 text-white/48">
+                    {member.aspiration}
+                  </p>
+                  <p className="mt-5 text-xs font-medium leading-5 text-white/30">
+                    {member.photoStatus}
+                  </p>
+                </div>
+              </div>
             </GlassCard>
           ))}
+
+          <GlassCard variants={cardReveal} shouldReduceMotion={shouldReduceMotion} className="min-h-[320px]">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-sky-100/62">
+              Contribution summary
+            </p>
+            <div className="mt-7 grid gap-4">
+              {teamMembers[0].contributions.map((item, index) => (
+                <div key={item} className="grid grid-cols-[32px_1fr] gap-4 border-t border-white/10 pt-4">
+                  <span className="font-mono text-xs font-bold tabular-nums text-white/28">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <p className="text-sm font-medium leading-6 text-white/58">
+                    {item}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <CardLink href="./about-us.html">Open About Us Page</CardLink>
+          </GlassCard>
         </motion.div>
       </SectionShell>
 
@@ -815,11 +909,16 @@ function App() {
               ))}
             </nav>
             <a
-              href="#reference-list"
+              href="./reference-list.html"
               className="w-fit text-sm font-bold text-sky-100/76 transition hover:text-sky-100"
             >
-              Reference List
+              Open full Reference List
             </a>
+            <ol className="grid max-w-3xl gap-2 text-xs font-medium leading-5 text-white/36">
+              {apaReferences.slice(0, 3).map((reference) => (
+                <li key={reference}>{reference}</li>
+              ))}
+            </ol>
             <p className="max-w-3xl text-xs font-medium leading-5 text-white/42">
               This project is for educational use. Dataset links, AI chat
               experiences, and action tools are provided as learning interfaces

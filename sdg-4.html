@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (() => {
+        try {
+          const theme = localStorage.getItem("sdg-theme") === "light" ? "light" : "dark";
+          document.documentElement.classList.toggle("light", theme === "light");
+          document.documentElement.classList.toggle("dark", theme !== "light");
+          document.documentElement.style.colorScheme = theme;
+        } catch {
+          document.documentElement.classList.add("dark");
+          document.documentElement.style.colorScheme = "dark";
+        }
+      })();
+    </script>
+    <title>SDG 4 — Quality Education | Bruniverse</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/sdg-4.jsx"></script>
+  </body>
+</html>
