@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import PageTransition from "../components/motion/PageTransition";
-import SoftAurora from "../components/react-bits/SoftAurora";
 import ThemeToggle from "../components/theme/ThemeToggle";
 import { siteNavItems } from "./siteData";
 import "../react.css";
@@ -11,7 +10,7 @@ export const motionEase = [0.23, 1, 0.32, 1];
 
 export function fadeUp(shouldReduceMotion, delay = 0) {
   return {
-    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 22 },
+    hidden: { opacity: 1, y: shouldReduceMotion ? 0 : 14 },
     show: {
       opacity: 1,
       y: 0,
@@ -53,28 +52,7 @@ export function HashScroll() {
 
 function Background() {
   return (
-    <div className="pointer-events-none fixed inset-0 z-0">
-      <div className="absolute inset-0 opacity-70" style={{ transform: "scale(1.1)" }}>
-        <SoftAurora
-          speed={0.6}
-          scale={1.5}
-          brightness={1.05}
-          color1="#e0e7ff"
-          color2="#6366f1"
-          noiseFrequency={2.5}
-          noiseAmplitude={1}
-          bandHeight={0.5}
-          bandSpread={1}
-          octaveDecay={0.1}
-          layerOffset={0.8}
-          colorSpeed={1}
-        />
-      </div>
-      <div className="hero-starfield hero-starfield-far pointer-events-none absolute inset-0" />
-      <div className="hero-starfield hero-starfield-near pointer-events-none absolute inset-0" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_72%_46%,rgba(99,102,241,0.16)_0%,rgba(56,189,248,0.07)_22%,transparent_48%),radial-gradient(circle_at_50%_68%,rgba(129,140,248,0.07)_0%,transparent_42%),radial-gradient(circle_at_50%_50%,transparent_0%,rgba(6,6,15,0.32)_48%,rgba(6,6,15,0.92)_100%)]" />
-      <div className="noise-overlay pointer-events-none absolute inset-0 opacity-[0.1] mix-blend-screen" />
-    </div>
+    <div className="apple-page-backdrop pointer-events-none fixed inset-0 z-0" aria-hidden="true" />
   );
 }
 
@@ -84,7 +62,7 @@ export function SiteHeader({ activeHref }) {
       initial="hidden"
       animate="show"
       variants={fadeUp(false)}
-      className="relative z-20 mx-auto flex w-full max-w-7xl items-center justify-between border-b border-white/10 px-5 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-white/64 sm:px-8 sm:py-4 sm:text-xs lg:px-10"
+      className="apple-site-header relative z-20 mx-auto flex w-full max-w-7xl items-center justify-between border-b border-white/10 px-5 py-3 text-[11px] font-semibold text-white/64 sm:px-8 sm:py-4 sm:text-xs lg:px-10"
     >
       <div className="flex items-center gap-6">
         <a href="./index.html" className="text-white/90 transition hover:text-white">
@@ -116,7 +94,7 @@ export function StaticPageShell({ transitionKey, activeHref, children }) {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <PageTransition transitionKey={transitionKey} shouldReduceMotion={shouldReduceMotion}>
+    <PageTransition transitionKey={transitionKey} shouldReduceMotion>
       <main className="aurora-landing relative min-h-dvh overflow-x-clip bg-[#06060f] text-white">
         <HashScroll />
         <Background />
@@ -130,7 +108,7 @@ export function StaticPageShell({ transitionKey, activeHref, children }) {
 
 export function HeroSection({ eyebrow, title, copy, children, shouldReduceMotion }) {
   return (
-    <section className="relative overflow-hidden px-6 pt-16 pb-20 sm:px-10 sm:pt-24 sm:pb-28 lg:px-12 lg:pt-32 lg:pb-36">
+    <section className="relative overflow-hidden px-6 pt-14 pb-16 sm:px-10 sm:pt-20 sm:pb-20 lg:px-12 lg:pt-24 lg:pb-24">
       <div className="mx-auto max-w-7xl">
         <motion.div
           initial="hidden"
@@ -202,7 +180,7 @@ export function GlassPanel({ children, className = "", variants, shouldReduceMot
           ? undefined
           : { transform: "translate3d(0, -4px, 0)", transition: { duration: 0.18, ease: motionEase } }
       }
-      className={`relative overflow-hidden rounded-lg border border-white/10 bg-white/[0.045] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur transition duration-300 hover:border-sky-100/24 hover:bg-white/[0.065] ${className}`}
+      className={`apple-card relative overflow-hidden rounded-lg border border-white/10 bg-white/[0.045] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur transition duration-300 hover:border-sky-100/24 hover:bg-white/[0.065] ${className}`}
     >
       {children}
     </motion.article>
@@ -215,10 +193,10 @@ export function PillLink({ href, children, variant = "light" }) {
   return (
     <a
       href={href}
-      className={`inline-flex w-fit items-center gap-2 rounded-lg px-5 py-3 text-sm font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-200 ${
+      className={`inline-flex w-fit items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-200 ${
         isLight
-          ? "bg-white text-black shadow-[0_18px_48px_rgba(255,255,255,0.14)] hover:bg-sky-100"
-          : "border border-white/24 bg-black/20 text-white hover:border-sky-100/42 hover:bg-white/10"
+          ? "apple-primary bg-white text-black shadow-[0_18px_48px_rgba(255,255,255,0.14)] hover:bg-sky-100"
+          : "apple-secondary border border-white/24 bg-black/20 text-white hover:border-sky-100/42 hover:bg-white/10"
       }`}
     >
       <span>{children}</span>
@@ -229,7 +207,7 @@ export function PillLink({ href, children, variant = "light" }) {
 
 export function SiteFooter() {
   return (
-    <footer className="relative z-10 mx-auto max-w-7xl border-t border-white/[0.05] px-6 py-10 sm:px-10 sm:py-12 lg:px-12">
+    <footer className="apple-footer relative z-10 mx-auto max-w-7xl border-t border-white/[0.05] px-6 py-10 sm:px-10 sm:py-12 lg:px-12">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/24">
           SDG Intelligence Hub - VBE 1014

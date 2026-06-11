@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import { motion, useReducedMotion } from "framer-motion";
 import { Globe3D } from "@/components/ui/3d-globe";
 import PageTransition from "./components/motion/PageTransition";
-import SoftAurora from "./components/react-bits/SoftAurora";
 import ThemeToggle from "./components/theme/ThemeToggle";
 import { allSdgGoals, apaReferences, sdgAgenda, teamMembers, tenActNowActions } from "./pages/siteData";
 import "./react.css";
@@ -48,6 +47,7 @@ const navItems = [
   { label: "Dataset Hub", href: "#dataset-hub" },
   { label: "SDG Act Now", href: "./act-now.html" },
   { label: "About Us", href: "./about-us.html" },
+  { label: "Join Us", href: "#join-us" },
   { label: "Reference List", href: "./reference-list.html" },
 ];
 
@@ -74,6 +74,26 @@ const platformFeatures = [
   },
 ];
 
+const sdgWheelColors = [
+  "#E5243B",
+  "#DDA63A",
+  "#4C9F38",
+  "#C5192D",
+  "#FF3A21",
+  "#26BDE2",
+  "#FCC30B",
+  "#A21942",
+  "#FD6925",
+  "#DD1367",
+  "#FD9D24",
+  "#BF8B2E",
+  "#3F7E44",
+  "#0A97D9",
+  "#56C02B",
+  "#00689D",
+  "#19486A",
+];
+
 const selectedGoals = [
   {
     number: "SDG 4",
@@ -88,10 +108,10 @@ const selectedGoals = [
     href: "./sdg-13.html",
   },
   {
-    number: "SDG 3",
-    title: "Good Health and Well-being",
-    copy: "Explore how public health systems, prevention, and equity shape sustainable societies.",
-    href: "./sdg-3.html",
+    number: "SDG 2",
+    title: "Zero Hunger",
+    copy: "Study food security, sustainable agriculture, and how reducing waste protects shared resources.",
+    href: "./sdg-2.html",
   },
   {
     number: "SDG 16",
@@ -113,9 +133,9 @@ const aiVoices = [
     question: "What climate actions are realistic for a university community?",
   },
   {
-    title: "Public Health AI",
-    sdg: "Related SDG: 3",
-    question: "How do health systems prepare for climate-related risks?",
+    title: "Food Security AI",
+    sdg: "Related SDG: 2",
+    question: "How can students reduce food waste while supporting food security?",
   },
   {
     title: "Peace and Justice AI",
@@ -134,8 +154,8 @@ const datasetCategories = [
     copy: "Emissions, temperature, energy, disaster risk, and adaptation datasets for climate inquiry.",
   },
   {
-    title: "Health Data",
-    copy: "Public health, well-being, disease burden, and health system indicators.",
+    title: "Food Security Data",
+    copy: "Hunger, nutrition, food waste, agriculture, and food-system resilience indicators.",
   },
   {
     title: "Inequality and Justice Data",
@@ -145,13 +165,6 @@ const datasetCategories = [
     title: "General SDG Data Portals",
     copy: "Cross-goal portals for comparing indicators across regions, themes, and timelines.",
   },
-];
-
-const orbitalNodes = [
-  { label: "Learn", position: "left-[17%] top-[32%]", line: "w-14 rotate-[12deg]" },
-  { label: "Ask", position: "right-[24%] top-[24%]", line: "w-12 -rotate-[16deg]" },
-  { label: "Research", position: "right-[21%] top-[55%]", line: "w-14 rotate-[8deg]" },
-  { label: "Act", position: "left-[25%] bottom-[22%]", line: "w-10 -rotate-[18deg]" },
 ];
 
 function SectionShell({
@@ -213,7 +226,7 @@ function GlassCard({ children, className = "", variants, shouldReduceMotion }) {
               transition: { duration: 0.2, ease: motionEase },
             }
       }
-      className={`relative overflow-hidden rounded-lg border border-white/10 bg-white/[0.045] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur transition duration-300 hover:border-sky-100/24 hover:bg-white/[0.065] ${className}`}
+      className={`apple-card relative overflow-hidden rounded-lg border border-white/10 bg-white/[0.045] p-5 shadow-[0_24px_80px_rgba(0,0,0,0.22)] backdrop-blur transition duration-300 hover:border-sky-100/24 hover:bg-white/[0.065] ${className}`}
     >
       {children}
     </motion.article>
@@ -224,187 +237,86 @@ function CardLink({ href = "#", children }) {
   return (
     <a
       href={href}
-      className="mt-6 inline-flex w-fit rounded-lg border border-white/16 bg-white/[0.055] px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-sky-100/86 transition hover:border-sky-100/34 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-200"
+      className="apple-card-link mt-6 inline-flex w-fit rounded-lg border border-white/16 bg-white/[0.055] px-4 py-2 text-xs font-semibold uppercase text-sky-100/86 transition hover:border-sky-100/34 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-200"
     >
       {children}
     </a>
   );
 }
 
-function HeroOrbitalVisual({ shouldReduceMotion }) {
-  return (
-    <motion.div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 z-[4] hidden opacity-65 md:block lg:opacity-85"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: shouldReduceMotion ? 0.62 : 1 }}
-      transition={{ duration: shouldReduceMotion ? 0.18 : 0.7, ease: motionEase }}
-    >
-      <motion.div
-        className="relative h-full w-full"
-        animate={
-          shouldReduceMotion
-            ? undefined
-            : {
-                transform: [
-                  "translate3d(0, 0, 0)",
-                  "translate3d(0, -8px, 0)",
-                  "translate3d(0, 0, 0)",
-                ],
-              }
-        }
-        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <div className="absolute left-1/2 top-1/2 z-[1] h-[62%] w-[116%] -translate-x-1/2 -translate-y-1/2 -rotate-12 rounded-[50%] border border-cyan-100/8" />
-        <div className="absolute left-1/2 top-1/2 z-[1] h-[55%] w-[108%] -translate-x-1/2 -translate-y-1/2 rotate-[18deg] rounded-[50%] border border-teal-100/7" />
-        <div className="absolute left-1/2 top-1/2 z-[1] h-[74%] w-[82%] -translate-x-1/2 -translate-y-1/2 rotate-[34deg] rounded-[50%] border border-sky-100/7" />
-        <motion.div
-          className="absolute left-1/2 top-1/2 z-[1] h-[66%] w-[120%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] border border-dashed border-cyan-100/8"
-          animate={shouldReduceMotion ? undefined : { rotate: 360 }}
-          transition={{ duration: 44, repeat: Infinity, ease: "linear" }}
-        />
-        <div className="absolute left-1/2 top-1/2 z-[5] h-[61%] w-[116%] -translate-x-1/2 -translate-y-1/2 -rotate-12 rounded-[50%] border-t border-cyan-100/32 border-b-transparent border-l-transparent border-r-transparent shadow-[0_-10px_30px_rgba(125,211,252,0.08)]" />
-        <div className="absolute left-1/2 top-1/2 z-[5] h-[54%] w-[108%] -translate-x-1/2 -translate-y-1/2 rotate-[18deg] rounded-[50%] border-t border-teal-100/22 border-b-transparent border-l-transparent border-r-transparent" />
+function SdgColourWheel() {
+  const segment = 360 / sdgWheelColors.length;
+  const gradient = sdgWheelColors
+    .map((color, index) => `${color} ${index * segment}deg ${(index + 1) * segment}deg`)
+    .join(", ");
 
-        {orbitalNodes.map((node, index) => (
-          <motion.div
-            key={node.label}
-            className={`absolute z-[6] ${node.position}`}
-            animate={
-              shouldReduceMotion
-                ? undefined
-                : {
-                    transform: [
-                      "translate3d(0, 0, 0)",
-                      `translate3d(${index % 2 ? -5 : 5}px, ${index < 2 ? -6 : 6}px, 0)`,
-                      "translate3d(0, 0, 0)",
-                    ],
-                  }
-            }
-            transition={{
-              duration: 5.8 + index * 0.7,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: index * 0.15,
-            }}
-          >
-            <div className="relative flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-cyan-100 shadow-[0_0_16px_rgba(125,211,252,0.8)]" />
-              <span className={`${node.line} h-px bg-gradient-to-r from-cyan-100/46 to-transparent`} />
-              <span className="rounded-full border border-indigo-200/18 bg-[#090918]/58 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.13em] text-indigo-100/80 shadow-[0_12px_48px_rgba(49,46,129,0.28)] backdrop-blur-md">
-                {node.label}
-              </span>
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
-    </motion.div>
+  return (
+    <div
+      aria-label="United Nations SDG colour wheel"
+      className="relative mx-auto aspect-square w-full max-w-[190px] rounded-full"
+      style={{ background: `conic-gradient(${gradient})` }}
+    >
+      <div className="absolute inset-[22%] grid place-items-center rounded-full border border-black/12 bg-[#0a0a1a] text-center">
+        <span className="px-3 text-[11px] font-bold uppercase leading-4 tracking-[0.14em] text-white/72">
+          SDG
+          <br />
+          17 Goals
+        </span>
+      </div>
+    </div>
   );
+}
+
+function HashScroll() {
+  useEffect(() => {
+    function scrollToHash() {
+      const id = window.location.hash.slice(1);
+      if (!id) return;
+
+      window.setTimeout(() => {
+        document.getElementById(decodeURIComponent(id))?.scrollIntoView({ block: "start" });
+      }, 120);
+    }
+
+    scrollToHash();
+    window.addEventListener("hashchange", scrollToHash);
+    return () => window.removeEventListener("hashchange", scrollToHash);
+  }, []);
+
+  return null;
 }
 
 function App() {
   const shouldReduceMotion = useReducedMotion();
-  const heroGroup = staggerVariant(shouldReduceMotion, 0.075, 0.08);
   const sectionGroup = staggerVariant(shouldReduceMotion, 0.055, 0.02);
-  const heroReveal = revealVariant(shouldReduceMotion, 18, 0.99);
   const cardReveal = revealVariant(shouldReduceMotion, 14, 0.985);
   const sectionReveal = revealVariant(shouldReduceMotion, 20, 0.99);
 
   return (
     <PageTransition transitionKey="landing" shouldReduceMotion={shouldReduceMotion}>
       <main className="aurora-landing relative min-h-dvh overflow-x-clip bg-[#06060f] text-white">
-      <div
-        className="pointer-events-none absolute inset-[-5vh] z-0"
-      >
-        <div
-          className="absolute inset-0 opacity-70"
-          style={{ transform: "scale(1.1)" }}
-        >
-          <SoftAurora
-            speed={0.6}
-            scale={1.5}
-            brightness={1.05}
-            color1="#e0e7ff"
-            color2="#6366f1"
-            noiseFrequency={2.5}
-            noiseAmplitude={1}
-            bandHeight={0.5}
-            bandSpread={1}
-            octaveDecay={0.1}
-            layerOffset={0.8}
-            colorSpeed={1}
-          />
-        </div>
-
-        <div className="hero-starfield hero-starfield-far pointer-events-none absolute inset-0" />
-        <div className="hero-starfield hero-starfield-near pointer-events-none absolute inset-0" />
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_72%_46%,rgba(99,102,241,0.16)_0%,rgba(56,189,248,0.07)_22%,transparent_48%),radial-gradient(circle_at_50%_68%,rgba(129,140,248,0.07)_0%,transparent_42%),radial-gradient(circle_at_50%_50%,transparent_0%,rgba(6,6,15,0.32)_48%,rgba(6,6,15,0.92)_100%)]" />
-        <div className="noise-overlay pointer-events-none absolute inset-0 opacity-[0.1] mix-blend-screen" />
-      </div>
+      <HashScroll />
+      <div className="apple-page-backdrop pointer-events-none absolute inset-0 z-0" aria-hidden="true" />
 
       <section
         id="home"
-        className="relative z-10 min-h-[100svh] overflow-x-clip"
+        className="relative z-10 min-h-[720px] overflow-hidden lg:min-h-[min(900px,100svh)]"
       >
-        <div className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(circle_at_74%_42%,rgba(129,140,248,0.2)_0%,rgba(56,189,248,0.08)_22%,transparent_48%)]" />
-        <div
-          className="pointer-events-none absolute bottom-[-8svh] left-1/2 z-[3] h-[54svh] min-h-[330px] w-[min(760px,130vw)] -translate-x-1/2 opacity-90 sm:bottom-[-12vh] sm:h-[84vh] sm:min-h-[560px] sm:w-[min(980px,132vw)] sm:opacity-95 md:bottom-[-6vh] md:left-auto md:right-[-18vw] md:h-[96vh] md:w-[min(1180px,90vw)] md:translate-x-0 lg:right-[-12vw] xl:right-[-8vw]"
-          style={{
-            transformOrigin: "50% 100%",
-          }}
-        >
-          <motion.div
-            className="relative h-full w-full"
-            initial={{
-              opacity: 0,
-              transform: shouldReduceMotion
-                ? "scale(1)"
-                : "scale(0.982) translate3d(0, 10px, 0)",
-            }}
-            animate={{ opacity: 1, transform: "scale(1) translate3d(0, 0, 0)" }}
-            transition={{ duration: shouldReduceMotion ? 0.18 : 0.8, ease: motionEase }}
-          >
-            <div className="pointer-events-none absolute inset-x-[5%] top-[14%] h-[36%] rounded-[999px] bg-[radial-gradient(ellipse_at_center,rgba(224,231,255,0.44)_0%,rgba(129,140,248,0.24)_30%,rgba(99,102,241,0.14)_52%,transparent_74%)] blur-3xl" />
-            <div className="pointer-events-none absolute inset-x-[14%] top-[23%] h-[18%] rounded-[999px] bg-indigo-200/18 blur-2xl mix-blend-screen" />
-            <div className="relative h-full w-full">
-              <HeroOrbitalVisual shouldReduceMotion={shouldReduceMotion} />
-              <Globe3D
-                className="relative z-[3] h-full w-full"
-                markers={[]}
-                config={{
-                  radius: 2.25,
-                  showAtmosphere: false,
-                  atmosphereColor: "#60a5fa",
-                  atmosphereIntensity: 0.35,
-                  atmosphereBlur: 4.2,
-                  bumpScale: 4,
-                  autoRotateSpeed: 0.22,
-                  showWireframe: true,
-                  wireframeColor: "#38bdf8",
-                  ambientIntensity: 0.75,
-                  pointLightIntensity: 2,
-                  enableZoom: false,
-                  enablePan: false,
-                  backgroundColor: null,
-                }}
-              />
-            </div>
-          </motion.div>
-        </div>
+        <div className="apple-hero-vignette pointer-events-none absolute inset-0 z-[1]" />
 
         <div
-          className="relative z-10 flex min-h-[100svh] flex-col px-5 pb-16 pt-4 text-center sm:px-8 sm:pb-20 sm:pt-5 lg:px-10 lg:pb-20 lg:pt-6 lg:text-left"
+          className="relative z-10 flex min-h-[720px] flex-col px-5 pb-10 pt-4 text-center sm:px-8 sm:pb-12 sm:pt-5 lg:min-h-[min(900px,100svh)] lg:px-10 lg:pb-10 lg:pt-6 lg:text-left"
         >
           <motion.header
             initial="hidden"
             animate="show"
             variants={revealVariant(shouldReduceMotion, -8, 1)}
-            className="mx-auto flex w-full max-w-7xl items-center justify-between border-b border-white/10 pb-3 text-[11px] font-bold uppercase tracking-[0.12em] text-white/64 sm:pb-4 sm:text-xs"
+            className="apple-site-header mx-auto flex w-full max-w-7xl items-center justify-between border-b border-white/10 pb-3 text-[11px] font-semibold text-white/64 sm:pb-4 sm:text-xs"
           >
             <a href="./index.html" className="text-white/90 transition hover:text-white">
               Bruniverse
             </a>
-            <nav className="hidden items-center gap-5 text-white/58 lg:flex lg:gap-7">
+            <nav className="hidden items-center gap-4 text-white/58 lg:flex xl:gap-6">
               {navItems.map((item) => (
                 <a
                   key={item.href}
@@ -415,7 +327,7 @@ function App() {
                 </a>
               ))}
             </nav>
-            <div className="flex items-center gap-3">
+            <div className="flex shrink-0 items-center gap-2 sm:gap-3">
               <span className="hidden text-right text-sky-100/76 sm:inline">
                 VBE 1014
               </span>
@@ -423,41 +335,35 @@ function App() {
             </div>
           </motion.header>
 
-          <div className="mx-auto grid w-full max-w-7xl items-start gap-4 py-4 sm:flex-1 sm:items-center sm:gap-6 sm:py-6 lg:grid-cols-[minmax(0,0.98fr)_minmax(300px,0.62fr)] lg:py-4">
-            <motion.div
-              initial="hidden"
-              animate="show"
-              variants={heroGroup}
-              className="grid max-w-[720px] gap-3 justify-self-center sm:gap-4 lg:translate-y-4 lg:gap-5 lg:justify-self-start"
+          <div className="mx-auto grid w-full max-w-7xl flex-1 items-center gap-8 py-6 sm:py-10 lg:grid-cols-[minmax(0,0.95fr)_minmax(360px,0.72fr)] lg:gap-10 lg:py-8">
+            <div
+              className="grid max-w-[760px] gap-3 justify-self-center sm:gap-4 lg:gap-5 lg:justify-self-start"
             >
-              <motion.p
-                variants={heroReveal}
-                className="mx-auto inline-flex w-fit items-center gap-3 rounded-lg border border-sky-100/18 bg-sky-100/[0.06] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-sky-100/86 backdrop-blur sm:py-2 sm:text-[11px] sm:tracking-[0.18em] md:mx-0"
+              <p
+                className="apple-eyebrow mx-auto inline-flex w-fit items-center gap-3 rounded-lg border border-white/10 bg-white/[0.045] px-3 py-1.5 text-[10px] font-semibold uppercase text-white/62 sm:py-2 sm:text-[11px] md:mx-0"
               >
-                <span className="h-px w-8 bg-sky-200/58" />
+                <span className="h-px w-8 bg-white/34" />
                 Ethics and Sustainability
-              </motion.p>
-              <motion.h1
-                variants={heroReveal}
-                className="max-w-[760px] text-[clamp(2rem,9.8vw,3.5rem)] font-bold leading-[0.94] tracking-normal [text-wrap:balance] sm:text-[clamp(2.9rem,6vw,5.5rem)] lg:text-[clamp(3.9rem,4.85vw,5.15rem)]"
+              </p>
+              <h1
+                className="apple-hero-title text-[clamp(2.25rem,8.5vw,3.55rem)] font-bold leading-[0.98] tracking-normal [text-wrap:balance] sm:text-[clamp(3.05rem,5.5vw,4.8rem)] lg:text-[clamp(3.55rem,4.2vw,4.9rem)]"
               >
-                Sustainable Development Goals, made clear.
-              </motion.h1>
-              <motion.p
-                variants={heroReveal}
-                className="mx-auto max-w-[660px] text-sm font-medium leading-relaxed text-white/68 [text-wrap:pretty] sm:text-base md:text-lg lg:mx-0"
+                <span className="block">Sustainable Goals,</span>
+                <span className="block">made clear.</span>
+              </h1>
+              <p
+                className="apple-hero-copy mx-auto text-sm font-medium leading-relaxed text-white/68 [text-wrap:pretty] sm:text-base md:text-lg lg:mx-0"
               >
                 A focused landing hub for learning the SDGs, shaping ethical
                 sustainability arguments, and asking Unknown when the work gets
                 complicated.
-              </motion.p>
-              <motion.div
-                variants={heroReveal}
+              </p>
+              <div
                 className="pointer-events-auto flex flex-wrap justify-center gap-3 pt-1 lg:justify-start"
               >
                 <motion.a
                   href="./main.html"
-                  className="rounded-lg bg-white px-5 py-3 text-sm font-bold text-black shadow-[0_18px_48px_rgba(255,255,255,0.18)] transition duration-300 hover:-translate-y-0.5 hover:bg-sky-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-200 active:translate-y-0"
+                  className="apple-primary rounded-full bg-white px-5 py-3 text-sm font-semibold text-black transition duration-300 hover:-translate-y-0.5 hover:bg-sky-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-200 active:translate-y-0"
                   whileHover={
                     shouldReduceMotion
                       ? undefined
@@ -470,7 +376,7 @@ function App() {
                 </motion.a>
                 <motion.a
                   href="./chat.html"
-                  className="rounded-lg border border-white/24 bg-white/[0.07] px-5 py-3 text-sm font-bold text-white backdrop-blur transition duration-300 hover:-translate-y-0.5 hover:border-sky-100/42 hover:bg-white/12 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-200 active:translate-y-0"
+                  className="apple-secondary rounded-full border border-white/24 bg-white/[0.07] px-5 py-3 text-sm font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:border-sky-100/42 hover:bg-white/12 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-200 active:translate-y-0"
                   whileHover={
                     shouldReduceMotion
                       ? undefined
@@ -481,7 +387,48 @@ function App() {
                 >
                   Ask for Unknown
                 </motion.a>
-              </motion.div>
+              </div>
+            </div>
+
+            <motion.div
+              aria-hidden="true"
+              initial={{
+                opacity: 0,
+                transform: shouldReduceMotion
+                  ? "scale(1)"
+                  : "scale(0.985) translate3d(16px, 0, 0)",
+              }}
+              animate={{
+                opacity: 1,
+                transform: "scale(1) translate3d(0, 0, 0)",
+              }}
+              transition={{
+                duration: shouldReduceMotion ? 0.18 : 0.84,
+                ease: motionEase,
+              }}
+              className="apple-hero-visual pointer-events-none relative z-[3] mx-auto hidden aspect-square w-full max-w-[min(540px,40vw)] justify-self-center lg:block xl:max-w-[min(600px,38vw)]"
+            >
+              <div className="apple-globe-glow pointer-events-none absolute inset-x-[12%] top-[14%] h-[42%] rounded-[999px]" />
+              <Globe3D
+                className="relative z-[3] h-full w-full"
+                markers={[]}
+                config={{
+                  radius: 1.95,
+                  showAtmosphere: true,
+                  atmosphereColor: "#f5f5f7",
+                  atmosphereIntensity: 0.2,
+                  atmosphereBlur: 4,
+                  bumpScale: 2.1,
+                  autoRotateSpeed: 0.14,
+                  showWireframe: true,
+                  wireframeColor: "#f5f5f7",
+                  ambientIntensity: 1.08,
+                  pointLightIntensity: 1.42,
+                  enableZoom: false,
+                  enablePan: false,
+                  backgroundColor: null,
+                }}
+              />
             </motion.div>
           </div>
 
@@ -493,8 +440,7 @@ function App() {
             className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 border-t border-white/12 pt-4 text-left sm:gap-6"
           >
             <p className="max-w-[720px] text-xs font-bold uppercase tracking-[0.14em] text-white/46">
-              The collapse of civilization begins with the first bird hunted
-              down.
+              Clear goals. Practical choices. Better futures.
             </p>
             <p className="hidden max-w-sm text-right text-xs font-medium leading-5 text-sky-100/58 sm:block">
               Learn the goals, question the systems, then build a better answer.
@@ -546,7 +492,7 @@ function App() {
 
         <motion.div
           variants={sectionGroup}
-          className="mt-14 grid gap-4 lg:grid-cols-[0.92fr_1.08fr]"
+          className="mt-14 grid gap-4 lg:grid-cols-[0.88fr_1.02fr_0.72fr]"
         >
           <GlassCard
             variants={cardReveal}
@@ -576,6 +522,22 @@ function App() {
               {sdgAgenda.whyGuidanceMatters}
             </p>
             <CardLink href="./sdg-goals.html">Open SDG 17 Goals Page</CardLink>
+          </GlassCard>
+
+          <GlassCard
+            variants={cardReveal}
+            shouldReduceMotion={shouldReduceMotion}
+            className="min-h-[260px] bg-black/24"
+          >
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-sky-100/62">
+              Official colour wheel
+            </p>
+            <div className="mt-6">
+              <SdgColourWheel />
+            </div>
+            <p className="mt-6 text-xs font-medium leading-5 text-white/42">
+              Source: United Nations Sustainable Development Goals communications materials.
+            </p>
           </GlassCard>
         </motion.div>
 
@@ -706,7 +668,7 @@ function App() {
               <p className="mt-4 text-sm font-medium leading-6 text-white/62">
                 {category.copy}
               </p>
-              <CardLink href="#">View datasets</CardLink>
+              <CardLink href="./main.html#datasets-section">View datasets</CardLink>
             </GlassCard>
           ))}
         </motion.div>
@@ -776,8 +738,8 @@ function App() {
       <SectionShell
         id="about-us"
         eyebrow="About us"
-        title="Meet the project contributor."
-        copy="The About Us page records member identity, background, future vocation aspirations, selected SDG research, and design contribution for the assessment."
+        title="A small team, four focused contributions."
+        copy="The landing page keeps the team preview brief. Full backgrounds, career plans, and contribution details live on the About Us page."
         shouldReduceMotion={shouldReduceMotion}
         sectionGroup={sectionGroup}
         sectionReveal={sectionReveal}
@@ -785,67 +747,67 @@ function App() {
       >
         <motion.div
           variants={sectionGroup}
-          className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]"
+          className="grid items-stretch gap-3 sm:grid-cols-2 xl:grid-cols-4"
         >
           {teamMembers.map((member) => (
             <GlassCard
               key={member.name}
               variants={cardReveal}
               shouldReduceMotion={shouldReduceMotion}
-              className="min-h-[320px]"
+              className="h-full min-h-[260px] bg-black/22 p-4 sm:p-5"
             >
-              <div className="grid h-full gap-7 sm:grid-cols-[128px_1fr] sm:items-start">
-                <div className="grid aspect-square place-items-center rounded-lg border border-white/12 bg-[radial-gradient(circle_at_30%_24%,rgba(186,230,253,0.22),transparent_36%),linear-gradient(135deg,rgba(15,23,42,0.86),rgba(30,41,59,0.44))]">
-                  <span className="grid h-20 w-20 place-items-center rounded-full border border-sky-100/22 bg-white/[0.07] text-2xl font-extrabold text-sky-100/80">
-                    {member.initials}
-                  </span>
+              <div className="grid h-full min-w-0 grid-rows-[72px_1fr_auto] gap-4">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-white/12 bg-white/[0.04]">
+                    <img
+                      src={member.photoPath}
+                      alt={`${member.name} head shot`}
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="truncate text-xl font-bold leading-tight text-white">
+                      {member.englishName}
+                    </h3>
+                    <p className="mt-1 truncate text-sm font-semibold text-white/46">
+                      {member.name}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-sky-100/62">
+
+                <div className="border-t border-white/10 pt-4">
+                  <p className="team-preview-role text-sm font-medium leading-6 text-white/60">
                     {member.role}
                   </p>
-                  <h3 className="mt-4 text-3xl font-bold leading-tight text-white">
-                    {member.name}
-                  </h3>
-                  <p className="mt-2 text-sm font-semibold text-white/44">
-                    English name: {member.englishName}
-                  </p>
-                  <p className="mt-5 text-sm font-medium leading-6 text-white/62">
-                    {member.background}
-                  </p>
-                  <p className="mt-4 text-sm font-medium leading-6 text-white/48">
-                    {member.aspiration}
-                  </p>
-                  <p className="mt-5 text-xs font-medium leading-5 text-white/30">
-                    {member.photoStatus}
-                  </p>
+                </div>
+
+                <div className="grid min-h-[64px] content-end gap-2">
+                  {[...(member.selectedSdgs || []), ...(member.selectedActions || [])].slice(0, 2).map((item) => (
+                    <span
+                      key={item}
+                      className="team-preview-pill rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[11px] font-semibold text-white/54"
+                    >
+                      {item}
+                    </span>
+                  ))}
                 </div>
               </div>
             </GlassCard>
           ))}
+        </motion.div>
 
-          <GlassCard variants={cardReveal} shouldReduceMotion={shouldReduceMotion} className="min-h-[320px]">
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-sky-100/62">
-              Contribution summary
-            </p>
-            <div className="mt-7 grid gap-4">
-              {teamMembers[0].contributions.map((item, index) => (
-                <div key={item} className="grid grid-cols-[32px_1fr] gap-4 border-t border-white/10 pt-4">
-                  <span className="font-mono text-xs font-bold tabular-nums text-white/28">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <p className="text-sm font-medium leading-6 text-white/58">
-                    {item}
-                  </p>
-                </div>
-              ))}
-            </div>
-            <CardLink href="./about-us.html">Open About Us Page</CardLink>
-          </GlassCard>
+        <motion.div variants={sectionReveal} className="mt-6 flex justify-center">
+          <a
+            href="./about-us.html"
+            className="inline-flex rounded-full border border-white/16 bg-white/[0.07] px-5 py-3 text-sm font-semibold text-white/76 transition hover:border-sky-100/34 hover:bg-white/10 hover:text-sky-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-200"
+          >
+            Open About Us
+          </a>
         </motion.div>
       </SectionShell>
 
-      <section className="relative z-10 px-5 py-18 sm:px-8 sm:py-24 lg:px-10">
+      <section id="join-us" className="relative z-10 px-5 py-18 sm:px-8 sm:py-24 lg:px-10">
         <motion.div
           initial="hidden"
           whileInView="show"
@@ -853,33 +815,41 @@ function App() {
           variants={sectionGroup}
           className="mx-auto grid max-w-7xl gap-8 rounded-lg border border-sky-100/18 bg-sky-100/[0.055] p-6 text-center backdrop-blur md:grid-cols-[1fr_auto] md:items-center md:p-8 md:text-left"
         >
-          <motion.h2
+          <motion.div
             variants={sectionReveal}
-            className="text-3xl font-bold leading-tight text-white md:text-4xl"
+            className="max-w-2xl"
           >
-            Start exploring sustainable futures today.
-          </motion.h2>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-sky-100/62">
+              Join us
+            </p>
+            <h2 className="mt-3 text-3xl font-bold leading-tight text-white md:text-4xl">
+              Turn one goal into one practical action.
+            </h2>
+            <p className="mt-4 text-sm font-medium leading-6 text-white/58">
+              Choose a goal, test an Act Now habit, and use evidence to make sustainability visible in daily life.
+            </p>
+          </motion.div>
           <motion.div
             variants={sectionReveal}
             className="flex flex-wrap justify-center gap-3 md:justify-end"
           >
             <a
-              href="#explore-sdgs"
+              href="./act-now.html"
               className="rounded-lg bg-white px-5 py-3 text-sm font-bold text-black transition hover:-translate-y-0.5 hover:bg-sky-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-200"
             >
-              Explore SDGs
+              Start Act Now
             </a>
             <a
-              href="#asking"
+              href="./sdg-goals.html"
               className="rounded-lg border border-white/24 bg-black/20 px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:border-sky-100/42 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-200"
             >
-              Ask AI Voices
+              Explore Goals
             </a>
             <a
-              href="#dataset-hub"
+              href="./about-us.html"
               className="rounded-lg border border-white/24 bg-black/20 px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:border-sky-100/42 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-200"
             >
-              Research Datasets
+              Meet the Team
             </a>
           </motion.div>
         </motion.div>

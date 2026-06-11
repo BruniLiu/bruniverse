@@ -105,12 +105,6 @@ export default function WorkspaceChat() {
   const shouldReduceMotion = useReducedMotion();
   const abortRef = useRef(null);
   const scrollRef = useRef(null);
-  const [input, setInput] = useState(initialQuestion.current);
-  const [messages, setMessages] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  const hasMessages = messages.length > 0;
 
   // Check for pending question from Dashboard on mount
   const initialQuestion = useRef(
@@ -120,6 +114,11 @@ export default function WorkspaceChat() {
       return q || "";
     })(),
   );
+  const [input, setInput] = useState(initialQuestion.current);
+  const [messages, setMessages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const hasMessages = messages.length > 0;
 
   const welcomeMessages = useMemo(
     () => [

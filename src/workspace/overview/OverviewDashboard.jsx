@@ -13,7 +13,6 @@ import {
   Zap,
 } from "lucide-react";
 import { useWorkspace } from "../context/WorkspaceContext";
-import { createActivityEntry } from "../data/storage";
 
 const motionEase = [0.23, 1, 0.32, 1];
 
@@ -25,7 +24,7 @@ const platformFeatures = [
     copy: "Introduce the 17 Sustainable Development Goals and explain their global importance.",
     accent: "from-sky-400/20 to-blue-500/6",
     icon: BookOpen,
-    action: "literature",
+    href: "./sdg-goals.html",
   },
   {
     title: "Asking",
@@ -56,24 +55,28 @@ const selectedGoals = [
     title: "Quality Education",
     copy: "Advance inclusive learning opportunities that help communities build long-term resilience.",
     color: "border-l-red-400/40",
+    href: "./sdg-4.html",
   },
   {
     number: "SDG 13",
     title: "Climate Action",
     copy: "Understand climate risks, mitigation choices, and adaptation pathways for a warming planet.",
     color: "border-l-emerald-400/40",
+    href: "./sdg-13.html",
   },
   {
-    number: "SDG 3",
-    title: "Good Health and Well-being",
-    copy: "Explore how public health systems, prevention, and equity shape sustainable societies.",
-    color: "border-l-sky-400/40",
+    number: "SDG 2",
+    title: "Zero Hunger",
+    copy: "Study food security, sustainable agriculture, and how reducing waste protects shared resources.",
+    color: "border-l-amber-400/40",
+    href: "./sdg-2.html",
   },
   {
     number: "SDG 16",
     title: "Peace, Justice and Strong Institutions",
     copy: "Connect justice, accountable institutions, and peacebuilding to sustainable development.",
     color: "border-l-amber-400/40",
+    href: "./sdg-16.html",
   },
 ];
 
@@ -91,10 +94,10 @@ const aiVoices = [
     accent: "from-emerald-400/16 to-emerald-600/4",
   },
   {
-    title: "Public Health AI",
-    sdg: "SDG 3",
-    question: "How do health systems prepare for climate-related risks?",
-    accent: "from-sky-400/16 to-sky-600/4",
+    title: "Food Security AI",
+    sdg: "SDG 2",
+    question: "How can students reduce food waste while supporting food security?",
+    accent: "from-amber-400/16 to-amber-600/4",
   },
   {
     title: "Peace and Justice AI",
@@ -114,8 +117,8 @@ const datasetCategories = [
     copy: "Emissions, temperature, energy, disaster risk, and adaptation datasets.",
   },
   {
-    title: "Health Data",
-    copy: "Public health, well-being, disease burden, and health system indicators.",
+    title: "Food Security Data",
+    copy: "Hunger, nutrition, food waste, agriculture, and food-system resilience indicators.",
   },
   {
     title: "Inequality and Justice Data",
@@ -262,24 +265,65 @@ function ContributionHeatmap({ activityLog }) {
 
 // ── Reusable glass card ──
 
-function GlassCard({ children, accent, onClick, className = "" }) {
+function GlassCard({ children, accent, href, onClick, className = "" }) {
   const shouldReduceMotion = useReducedMotion();
+  const isInteractive = href || onClick;
+  const cardClass = `group relative block ${isInteractive ? "cursor-pointer" : ""} overflow-hidden rounded-xl border border-white/[0.08] bg-white/[0.03] p-5 text-left shadow-[0_16px_48px_rgba(0,0,0,0.18)] backdrop-blur transition duration-300 hover:border-indigo-200/20 hover:bg-white/[0.05] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-indigo-200 ${className}`;
+  const content = (
+    <>
+      {accent && (
+        <div className={`pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b ${accent}`} />
+      )}
+      <div className="relative">{children}</div>
+    </>
+  );
+
+  if (href) {
+    return (
+      <motion.a
+        href={href}
+        whileHover={
+          shouldReduceMotion
+            ? undefined
+            : { transform: "translate3d(0, -3px, 0)" }
+        }
+        transition={{ duration: 0.2, ease: motionEase }}
+        className={cardClass}
+      >
+        {content}
+      </motion.a>
+    );
+  }
+
+  if (onClick) {
+    return (
+      <motion.button
+        type="button"
+        onClick={onClick}
+        whileHover={
+          shouldReduceMotion
+            ? undefined
+            : { transform: "translate3d(0, -3px, 0)" }
+        }
+        transition={{ duration: 0.2, ease: motionEase }}
+        className={cardClass}
+      >
+        {content}
+      </motion.button>
+    );
+  }
 
   return (
     <motion.article
-      onClick={onClick}
       whileHover={
         shouldReduceMotion
           ? undefined
           : { transform: "translate3d(0, -3px, 0)" }
       }
       transition={{ duration: 0.2, ease: motionEase }}
-      className={`group relative cursor-pointer overflow-hidden rounded-xl border border-white/[0.08] bg-white/[0.03] p-5 shadow-[0_16px_48px_rgba(0,0,0,0.18)] backdrop-blur transition duration-300 hover:border-indigo-200/20 hover:bg-white/[0.05] ${className}`}
+      className={cardClass}
     >
-      {accent && (
-        <div className={`pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b ${accent}`} />
-      )}
-      <div className="relative">{children}</div>
+      {content}
     </motion.article>
   );
 }
@@ -307,33 +351,9 @@ export default function OverviewDashboard() {
   const notesCount = state.notes.length;
   const relCount = state.literature.reduce((sum, item) => sum + item.relationships.length, 0);
 
-  const handleCreateNoteFromGoal = (goal) => {
-    const newNote = {
-      id: crypto.randomUUID(),
-      title: `${goal.number}: ${goal.title}`,
-      content: `# ${goal.number}: ${goal.title}\n\n${goal.copy}\n\n## Research Questions\n\n- \n\n## Key Findings\n\n- \n\n## Related Papers\n\n`,
-      linkedLiteratureIds: [],
-      tags: [goal.number, "SDG"],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    dispatch({ type: "ADD_NOTE", payload: newNote });
-    dispatch({ type: "SELECT_NOTE", payload: newNote.id });
-    dispatch({ type: "SET_ACTIVE_VIEW", payload: "notes" });
-    dispatch({
-      type: "ADD_ACTIVITY",
-      payload: createActivityEntry({
-        type: "added_note",
-        description: `Created research note: ${goal.title}`,
-        relatedId: newNote.id,
-      }),
-    });
-  };
-
   const handleAskAI = (voice) => {
-    dispatch({ type: "SET_ACTIVE_VIEW", payload: "chat" });
-    // Store the question in a way the chat can pick up
     sessionStorage.setItem("bruniverse-pending-question", voice.question);
+    dispatch({ type: "SET_ACTIVE_VIEW", payload: "chat" });
   };
 
   const handleFeatureClick = (action) => {
@@ -429,7 +449,8 @@ export default function OverviewDashboard() {
             <GlassCard
               key={feature.title}
               accent={feature.accent}
-              onClick={() => handleFeatureClick(feature.action)}
+              href={feature.href}
+              onClick={feature.action ? () => handleFeatureClick(feature.action) : undefined}
             >
               <div className="mb-3 grid h-9 w-9 place-items-center rounded-lg border border-white/[0.08] bg-white/[0.04]">
                 <Icon size={17} className="text-indigo-100/60" />
@@ -463,7 +484,7 @@ export default function OverviewDashboard() {
             {selectedGoals.map((goal) => (
               <GlassCard
                 key={goal.number}
-                onClick={() => handleCreateNoteFromGoal(goal)}
+                href={goal.href}
               >
                 <div className="flex items-start gap-4">
                   <div className={`shrink-0 rounded-lg border-l-2 ${goal.color} bg-white/[0.04] px-3 py-2`}>
@@ -474,8 +495,8 @@ export default function OverviewDashboard() {
                   <div className="min-w-0">
                     <h3 className="text-[15px] font-bold text-white/85">{goal.title}</h3>
                     <p className="mt-1 text-[13px] leading-relaxed text-white/48">{goal.copy}</p>
-                    <p className="mt-2 text-[11px] font-medium text-indigo-100/50 transition group-hover:text-indigo-100/80">
-                      Create research note
+                    <p className="mt-2 inline-flex items-center gap-1 text-[11px] font-medium text-indigo-100/50 transition group-hover:text-indigo-100/80">
+                      Open goal page <ArrowRight size={12} />
                     </p>
                   </div>
                 </div>

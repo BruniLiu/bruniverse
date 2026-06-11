@@ -3,19 +3,13 @@ import ReactDOM from "react-dom/client";
 import ActionPage from "./pages/ActionPage";
 import { actNowContent } from "./pages/actNowData";
 
+const sourceAction = actNowContent.actions.find(
+  (item) => item.action === "Walk, bike, or take public transport",
+);
+
 const transportAction = {
   id: "transport",
-  member: "Janet (Yuheng Hou)",
-  sdg: "SDG 13",
-  action: "Walk, bike, or take public transport",
-  image: "/images/sdg13/image7.jpg",
-  imageCaption: "Source: ECO Reside — Environmental Benefits Of Public Transportation",
-  explanation: actNowContent.actions[0].explanation,
-  mechanism: actNowContent.actions[0].mechanism,
-  example: actNowContent.actions[0].example,
-  coBenefits: actNowContent.actions[0].coBenefits,
-  offsetSolutions: actNowContent.actions[0].offsetSolutions,
-  calculator: actNowContent.actions[0].calculator,
+  ...sourceAction,
   references: [
     "Climate Change Tracker. (2024). China's Progress and Recent Impact. https://climatechangetracker.org/nations/greenhouse-gas-emissions/china/progress-and-recent-impact",
     "FasterCapital. (2025, April 9). Bike Environmental Impact: Biking vs. Public Transportation: Which Is Better for the Planet. https://fastercapital.com/content/Bike-Environmental-Impact--Biking-vs--Public-Transportation--Which-Is-Better-for-the-Planet.html",

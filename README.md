@@ -1,10 +1,12 @@
 # Bruniverse
 
-Minimal React/Vite site with two pages:
+React/Vite SDG project site:
 
-- `index.html`: Aurora SDG hero with the 3D globe.
-- `main.html`: SDG Intelligence Hub login placeholder.
+- `index.html`: SDG landing page with navigation, selected goals, Act Now, team preview, and Join Us CTA.
+- `main.html`: SDG Intelligence Hub workspace with local browser login/session flow.
 - `chat.html`: Ask Unknown chatbox connected through `server.mjs`.
+- `sdg-goals.html`: Rubric-aligned SDG 17 Goals page.
+- `act-now.html`: Act Now evidence hub and selected action reports.
 
 Run locally:
 

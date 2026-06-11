@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 
 const motionEase = [0.23, 1, 0.32, 1];
@@ -12,15 +12,11 @@ const fadeUp = (shouldReduceMotion, delay = 0) => ({
   },
 });
 
-/* ── Emission factors (calibrated educational model) ── */
-/*  Defaults (4p, 30km, 2 flights, avg diet, avg home) → ~5.8 t  */
-/*  Eco-max  (6p, 0km,  0 flights, vegan, well+renewable) → ~1.9 t (below 2t target!) */
-/*  Worst    (1p, 100km, 10 flights, meat, low-eff)        → ~22 t  */
-const CAR_PER_KM_PER_YEAR = 365 * 0.00020; // 0.073 tCO₂e per km/day per year
-const FLIGHT_PER_TRIP = 0.60; // tCO₂e per short-haul economy flight
+const CAR_PER_KM_PER_YEAR = 365 * 0.0002;
+const FLIGHT_PER_TRIP = 0.6;
 const DIET_FACTORS = { "meat-heavy": 3.5, average: 2.0, vegetarian: 1.0, vegan: 0.3 };
 const HOME_FACTORS = { "low-efficiency": 4.0, average: 2.2, "well-insulated": 1.1, "well+renewable": 0.4 };
-const BASELINE_PER_PERSON = 1.5; // goods, services, food waste, public infrastructure
+const BASELINE_PER_PERSON = 1.5;
 const UN_TARGET = 2.0;
 
 const DIET_OPTIONS = [
@@ -37,15 +33,14 @@ const HOME_OPTIONS = [
   { key: "well+renewable", label: "+ Renewable" },
 ];
 
-/* ── Pure calculation ── */
 function calculateFootprint(inputs) {
   const perCapitaCar = (inputs.carDailyKm * CAR_PER_KM_PER_YEAR) / inputs.householdSize;
   const perCapitaFlight = inputs.annualFlights * FLIGHT_PER_TRIP;
   const perCapitaDiet = DIET_FACTORS[inputs.dietType];
   const perCapitaHome = HOME_FACTORS[inputs.homeEnergy] / inputs.householdSize;
   const perCapitaBaseline = BASELINE_PER_PERSON;
-
-  const totalPerCapita = perCapitaCar + perCapitaFlight + perCapitaDiet + perCapitaHome + perCapitaBaseline;
+  const totalPerCapita =
+    perCapitaCar + perCapitaFlight + perCapitaDiet + perCapitaHome + perCapitaBaseline;
 
   return {
     totalPerCapita,
@@ -60,20 +55,19 @@ function calculateFootprint(inputs) {
   };
 }
 
-function buildBreakdown(inputs, r) {
+function buildBreakdown(r) {
   return [
-    { label: "Car Travel", emoji: "\u{1F697}", value: r.perCapitaCar },
-    { label: "Flights", emoji: "✈️", value: r.perCapitaFlight },
-    { label: "Diet", emoji: "\u{1F969}", value: r.perCapitaDiet },
-    { label: "Home Energy", emoji: "\u{1F3E0}", value: r.perCapitaHome },
-    { label: "Goods & Services", emoji: "\u{1F4E6}", value: r.perCapitaBaseline },
+    { label: "Car travel", value: r.perCapitaCar },
+    { label: "Flights", value: r.perCapitaFlight },
+    { label: "Diet", value: r.perCapitaDiet },
+    { label: "Home energy", value: r.perCapitaHome },
+    { label: "Goods and services", value: r.perCapitaBaseline },
   ];
 }
 
-/* ── Sub-components ── */
-
 function SliderInput({ label, value, onChange, min, max, step, unit, shouldReduceMotion }) {
   const pct = ((value - min) / (max - min)) * 100;
+
   return (
     <motion.div variants={fadeUp(shouldReduceMotion)} className="space-y-2.5">
       <div className="flex items-center justify-between">
@@ -93,25 +87,16 @@ function SliderInput({ label, value, onChange, min, max, step, unit, shouldReduc
           max={max}
           step={step}
           value={value}
-          onChange={(e) => onChange(Number(e.target.value))}
-          className="range-slider w-full h-1 appearance-none cursor-pointer rounded-full bg-white/[0.08]
-            accent-white
-            [&::-webkit-slider-thumb]:appearance-none
-            [&::-webkit-slider-thumb]:relative
-            [&::-webkit-slider-thumb]:z-10
-            [&::-webkit-slider-thumb]:h-3.5
-            [&::-webkit-slider-thumb]:w-3.5
-            [&::-webkit-slider-thumb]:rounded-full
-            [&::-webkit-slider-thumb]:bg-white
-            [&::-webkit-slider-thumb]:transition-transform
-            [&::-webkit-slider-thumb]:duration-150
-            [&::-webkit-slider-thumb]:hover:scale-110
-            [&::-webkit-slider-thumb]:active:scale-95
-            [&::-moz-range-thumb]:h-3.5
-            [&::-moz-range-thumb]:w-3.5
-            [&::-moz-range-thumb]:rounded-full
-            [&::-moz-range-thumb]:bg-white
-            [&::-moz-range-thumb]:border-0"
+          onChange={(event) => onChange(Number(event.target.value))}
+          className="range-slider h-1 w-full cursor-pointer appearance-none rounded-full bg-white/[0.08] accent-white
+            [&::-moz-range-thumb]:h-3.5 [&::-moz-range-thumb]:w-3.5 [&::-moz-range-thumb]:rounded-full
+            [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-white
+            [&::-webkit-slider-thumb]:relative [&::-webkit-slider-thumb]:z-10
+            [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5
+            [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full
+            [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:transition-transform
+            [&::-webkit-slider-thumb]:duration-150 [&::-webkit-slider-thumb]:hover:scale-110
+            [&::-webkit-slider-thumb]:active:scale-95"
         />
       </div>
     </motion.div>
@@ -123,20 +108,18 @@ function SegmentedControl({ label, options, value, onChange, shouldReduceMotion 
     <motion.div variants={fadeUp(shouldReduceMotion)} className="space-y-2.5">
       <span className="text-sm font-medium text-white/65">{label}</span>
       <div className="inline-flex w-full flex-wrap rounded-lg bg-white/[0.04] p-0.5" role="radiogroup" aria-label={label}>
-        {options.map((opt) => (
+        {options.map((option) => (
           <button
-            key={opt.key}
+            key={option.key}
             type="button"
             role="radio"
-            aria-checked={value === opt.key}
-            onClick={() => onChange(opt.key)}
+            aria-checked={value === option.key}
+            onClick={() => onChange(option.key)}
             className={`flex-1 rounded-md px-2.5 py-1.5 text-xs font-medium transition-all duration-200 sm:px-3 sm:py-2 sm:text-sm ${
-              value === opt.key
-                ? "bg-white/[0.12] text-white"
-                : "text-white/40 hover:text-white/65"
+              value === option.key ? "bg-white/[0.12] text-white" : "text-white/40 hover:text-white/65"
             }`}
           >
-            {opt.label}
+            {option.label}
           </button>
         ))}
       </div>
@@ -146,13 +129,11 @@ function SegmentedControl({ label, options, value, onChange, shouldReduceMotion 
 
 function BreakdownBar({ item, maxValue, shouldReduceMotion }) {
   const pct = maxValue > 0 ? (item.value / maxValue) * 100 : 0;
+
   return (
     <motion.div variants={fadeUp(shouldReduceMotion)} className="space-y-1.5">
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-white/65">
-          <span className="mr-2 text-xs" aria-hidden="true">{item.emoji}</span>
-          {item.label}
-        </span>
+      <div className="flex items-center justify-between gap-4">
+        <span className="text-sm font-medium text-white/65">{item.label}</span>
         <span className="text-sm font-semibold tabular-nums text-white/45">
           {item.value.toFixed(2)} t
         </span>
@@ -170,11 +151,8 @@ function BreakdownBar({ item, maxValue, shouldReduceMotion }) {
   );
 }
 
-/* ── Main component ── */
-
 export default function CarbonFootprintCalculator({ staticData }) {
   const shouldReduceMotion = useReducedMotion();
-
   const [inputs, setInputs] = useState({
     householdSize: 4,
     carDailyKm: 30,
@@ -184,11 +162,9 @@ export default function CarbonFootprintCalculator({ staticData }) {
   });
 
   const results = useMemo(() => calculateFootprint(inputs), [inputs]);
-  const breakdown = useMemo(() => buildBreakdown(inputs, results), [inputs, results]);
-  const maxBreakdown = useMemo(() => Math.max(...breakdown.map((b) => b.value)), [breakdown]);
-
-  const update = useCallback((key) => (val) => setInputs((prev) => ({ ...prev, [key]: val })), []);
-
+  const breakdown = useMemo(() => buildBreakdown(results), [results]);
+  const maxBreakdown = useMemo(() => Math.max(...breakdown.map((item) => item.value)), [breakdown]);
+  const update = useCallback((key) => (value) => setInputs((prev) => ({ ...prev, [key]: value })), []);
   const isBelowTarget = results.totalPerCapita <= UN_TARGET;
 
   return (
@@ -199,7 +175,6 @@ export default function CarbonFootprintCalculator({ staticData }) {
       variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06 } } }}
       className="space-y-14 sm:space-y-16"
     >
-      {/* ── Inputs ── */}
       <motion.div variants={fadeUp(shouldReduceMotion)}>
         <p className="mb-10 text-xs font-semibold uppercase tracking-[0.2em] text-white/30">
           Your lifestyle
@@ -210,7 +185,9 @@ export default function CarbonFootprintCalculator({ staticData }) {
             label="Household size"
             value={inputs.householdSize}
             onChange={update("householdSize")}
-            min={1} max={6} step={1}
+            min={1}
+            max={6}
+            step={1}
             unit="people"
             shouldReduceMotion={shouldReduceMotion}
           />
@@ -218,7 +195,9 @@ export default function CarbonFootprintCalculator({ staticData }) {
             label="Daily car travel"
             value={inputs.carDailyKm}
             onChange={update("carDailyKm")}
-            min={0} max={100} step={5}
+            min={0}
+            max={100}
+            step={5}
             unit="km"
             shouldReduceMotion={shouldReduceMotion}
           />
@@ -226,7 +205,9 @@ export default function CarbonFootprintCalculator({ staticData }) {
             label="Annual flights"
             value={inputs.annualFlights}
             onChange={update("annualFlights")}
-            min={0} max={10} step={1}
+            min={0}
+            max={10}
+            step={1}
             unit="trips"
             shouldReduceMotion={shouldReduceMotion}
           />
@@ -250,14 +231,12 @@ export default function CarbonFootprintCalculator({ staticData }) {
         </div>
       </motion.div>
 
-      {/* ── Result ── */}
       <motion.div variants={fadeUp(shouldReduceMotion)}>
         <p className="mb-10 text-xs font-semibold uppercase tracking-[0.2em] text-white/30">
           Your footprint
         </p>
 
-        {/* Big number */}
-        <div className="mb-3 flex items-baseline gap-3">
+        <div className="mb-3 flex flex-wrap items-baseline gap-3">
           <motion.span
             key={results.totalPerCapita.toFixed(1)}
             initial={shouldReduceMotion ? undefined : { opacity: 0, y: 12 }}
@@ -267,14 +246,16 @@ export default function CarbonFootprintCalculator({ staticData }) {
           >
             {results.totalPerCapita.toFixed(1)}
           </motion.span>
-          <span className="text-xl font-semibold text-white/24">tCO₂e/yr</span>
+          <span className="text-xl font-semibold text-white/24">tCO2e/yr</span>
           <span className="text-sm font-medium text-white/20">per capita</span>
         </div>
         <p className="mb-10 text-sm font-medium text-white/40">
-          Total household: <span className="tabular-nums font-bold text-white/60">{results.totalHousehold.toFixed(1)} tCO₂e/yr</span>
+          Total household:{" "}
+          <span className="tabular-nums font-bold text-white/60">
+            {results.totalHousehold.toFixed(1)} tCO2e/yr
+          </span>
         </p>
 
-        {/* Target meter */}
         <div className="mb-10 space-y-2">
           <div className="flex items-center justify-between text-xs font-medium text-white/36">
             <span>0</span>
@@ -283,10 +264,7 @@ export default function CarbonFootprintCalculator({ staticData }) {
           </div>
           <div className="relative h-3 w-full overflow-hidden rounded-full bg-white/[0.06]">
             <div className="absolute inset-0 rounded-full bg-gradient-to-r from-emerald-500/60 via-amber-500/40 to-rose-500/60" />
-            <div
-              className="absolute top-0 h-full w-0.5 bg-white/70"
-              style={{ left: "20%", zIndex: 2 }}
-            />
+            <div className="absolute top-0 h-full w-0.5 bg-white/70" style={{ left: "20%", zIndex: 2 }} />
             <motion.div
               className="absolute top-0 h-full w-1 rounded-sm bg-white"
               style={{ zIndex: 3 }}
@@ -298,21 +276,24 @@ export default function CarbonFootprintCalculator({ staticData }) {
           </div>
           <p className="text-sm font-medium text-white/50">
             {isBelowTarget ? (
-              <span className="text-emerald-300 font-semibold">
-                Below the UN target — great job! That's {Math.abs(results.vsTarget).toFixed(1)} t under the 2t limit.
+              <span className="font-semibold text-emerald-300">
+                Below the UN target. That is {Math.abs(results.vsTarget).toFixed(1)} t under the 2t limit.
               </span>
             ) : (
               <span>
-                <span className="tabular-nums font-bold text-rose-300">{results.pctOfTarget.toFixed(0)}%</span>
-                {" "}of the UN 2t target —{" "}
-                <span className="tabular-nums font-bold text-rose-300">{results.vsTarget.toFixed(1)} t</span>
-                {" "}over. Try reducing car travel, flying less, or shifting to a plant-based diet.
+                <span className="tabular-nums font-bold text-rose-300">
+                  {results.pctOfTarget.toFixed(0)}%
+                </span>{" "}
+                of the UN 2t target -{" "}
+                <span className="tabular-nums font-bold text-rose-300">
+                  {results.vsTarget.toFixed(1)} t
+                </span>{" "}
+                over. Try reducing car travel, flying less, or shifting to a plant-based diet.
               </span>
             )}
           </p>
         </div>
 
-        {/* Category breakdown */}
         <div className="space-y-6">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/28">
             Where your emissions come from
@@ -328,7 +309,6 @@ export default function CarbonFootprintCalculator({ staticData }) {
         </div>
       </motion.div>
 
-      {/* ── Comparison ── */}
       {staticData && (
         <div className="grid gap-6 md:grid-cols-3">
           <motion.div variants={fadeUp(shouldReduceMotion)}>
@@ -363,12 +343,9 @@ export default function CarbonFootprintCalculator({ staticData }) {
         </div>
       )}
 
-      {/* Educational note */}
-      <motion.p
-        variants={fadeUp(shouldReduceMotion)}
-        className="text-xs leading-relaxed text-white/24"
-      >
-        Simplified emission factors for educational purposes. Actual footprints vary by region and energy mix. For formal assessments, refer to the UN Climate Neutral Now platform.
+      <motion.p variants={fadeUp(shouldReduceMotion)} className="text-xs leading-relaxed text-white/24">
+        Simplified emission factors for educational purposes. Actual footprints vary by region and energy
+        mix. For formal assessments, refer to the UN Climate Neutral Now platform.
       </motion.p>
     </motion.div>
   );

@@ -1,201 +1,406 @@
-import { motion, useReducedMotion } from "framer-motion";
-import PageTransition from "../components/motion/PageTransition";
-import { HashScroll } from "./AssessmentLayout";
-import SoftAurora from "../components/react-bits/SoftAurora";
-import ThemeToggle from "../components/theme/ThemeToggle";
+import { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  ArrowLeft,
+  Calculator,
+  Camera,
+  CheckCircle2,
+  ClipboardCheck,
+  Gauge,
+  Leaf,
+  Target,
+} from "lucide-react";
 import CarbonFootprintCalculator from "../components/calculator/CarbonFootprintCalculator";
-import { siteNavItems } from "./siteData";
-import "../react.css";
+import { fadeUp, motionEase, StaticPageShell, stagger } from "./AssessmentLayout";
 
-const motionEase = [0.23, 1, 0.32, 1];
+function toNumber(value) {
+  const parsed = Number.parseFloat(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
 
-function fadeUp(shouldReduceMotion, delay = 0) {
+function getMetrics(data) {
+  const before = toNumber(data.calculator?.before?.perCapita);
+  const after = toNumber(data.calculator?.after?.perCapita);
+  const reduction = Math.max(before - after, 0);
+  const percent = before > 0 ? (reduction / before) * 100 : 0;
+
   return {
-    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 24 },
-    show: { opacity: 1, y: 0, transition: { duration: shouldReduceMotion ? 0.1 : 0.6, ease: motionEase, delay } },
+    before,
+    after,
+    reduction,
+    percent,
+    screenshots: data.calculator?.screenshots?.length || 0,
   };
 }
 
-export default function ActionPage({ data }) {
-  const shouldReduceMotion = useReducedMotion();
+function EvidenceImage({ src, alt, initials = "JH" }) {
+  const [failed, setFailed] = useState(false);
+
+  if (src && !failed) {
+    return (
+      <img
+        src={src}
+        alt={alt}
+        className="h-16 w-16 shrink-0 rounded-lg border border-white/14 object-cover"
+        loading="lazy"
+        onError={() => setFailed(true)}
+      />
+    );
+  }
 
   return (
-    <PageTransition transitionKey={data.id} shouldReduceMotion={shouldReduceMotion}>
-      <main className="aurora-landing relative min-h-dvh overflow-x-clip bg-[#06060f] text-white">
-        <HashScroll />
-        <div className="pointer-events-none fixed inset-0 z-0">
-          <div className="absolute inset-0 opacity-70" style={{ transform: "scale(1.1)" }}>
-            <SoftAurora speed={0.6} scale={1.5} brightness={1.05} color1="#e0e7ff" color2="#6366f1" noiseFrequency={2.5} noiseAmplitude={1} bandHeight={0.5} bandSpread={1} octaveDecay={0.1} layerOffset={0.8} colorSpeed={1} />
+    <div className="grid h-16 w-16 shrink-0 place-items-center rounded-lg border border-dashed border-white/18 bg-white/[0.04] px-2 text-center">
+      <span className="text-[10px] font-semibold uppercase leading-4 text-white/38">
+        Evidence pending
+      </span>
+    </div>
+  );
+}
+
+function SummaryCard({ icon: Icon, label, value, detail, shouldReduceMotion }) {
+  return (
+    <motion.article
+      variants={fadeUp(shouldReduceMotion)}
+      whileHover={
+        shouldReduceMotion
+          ? undefined
+          : { transform: "translate3d(0, -3px, 0)", transition: { duration: 0.18, ease: motionEase } }
+      }
+      className="rounded-lg border border-white/12 bg-white/[0.055] p-5"
+    >
+      <div className="flex items-center justify-between gap-4">
+        <p className="text-sm font-semibold text-white/58">{label}</p>
+        <Icon size={18} strokeWidth={1.9} className="text-sky-100/72" aria-hidden="true" />
+      </div>
+      <p className="mt-5 text-3xl font-semibold leading-none text-white">{value}</p>
+      <p className="mt-3 text-sm leading-6 text-white/58">{detail}</p>
+    </motion.article>
+  );
+}
+
+function TextBlock({ eyebrow, title, copy, shouldReduceMotion }) {
+  return (
+    <motion.div variants={fadeUp(shouldReduceMotion)} className="max-w-3xl">
+      <p className="text-sm font-semibold text-sky-100/76">{eyebrow}</p>
+      <h2 className="mt-3 text-2xl font-semibold leading-tight text-white sm:text-4xl">{title}</h2>
+      <p className="mt-5 text-base leading-7 text-white/66">{copy}</p>
+    </motion.div>
+  );
+}
+
+function EvidenceCard({ solution, index, shouldReduceMotion }) {
+  return (
+    <motion.article
+      variants={fadeUp(shouldReduceMotion)}
+      className="rounded-lg border border-white/12 bg-white/[0.045] p-5"
+    >
+      <div className="flex items-start justify-between gap-4">
+        <p className="font-mono text-xs font-semibold tabular-nums text-white/34">
+          {String(index + 1).padStart(2, "0")}
+        </p>
+        <Camera size={17} strokeWidth={1.9} className="text-white/42" aria-hidden="true" />
+      </div>
+      <h3 className="mt-5 text-xl font-semibold leading-tight text-white">{solution.title}</h3>
+      <p className="mt-4 text-sm leading-6 text-white/58">{solution.desc}</p>
+      <div className="mt-6 border-t border-white/10 pt-5">
+        <div className="flex gap-4">
+          <EvidenceImage src={solution.evidenceImage} alt={`${solution.title} evidence`} />
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-white/32">
+              Evidence attachment
+            </p>
+            <p className="mt-2 text-sm leading-6 text-white/54">{solution.evidence}</p>
           </div>
-          <div className="hero-starfield hero-starfield-far pointer-events-none absolute inset-0" />
-          <div className="hero-starfield hero-starfield-near pointer-events-none absolute inset-0" />
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_72%_46%,rgba(99,102,241,0.16)_0%,rgba(56,189,248,0.07)_22%,transparent_48%),radial-gradient(circle_at_50%_68%,rgba(129,140,248,0.07)_0%,transparent_42%),radial-gradient(circle_at_50%_50%,transparent_0%,rgba(6,6,15,0.32)_48%,rgba(6,6,15,0.92)_100%)]" />
-          <div className="noise-overlay pointer-events-none absolute inset-0 opacity-[0.1] mix-blend-screen" />
         </div>
+      </div>
+    </motion.article>
+  );
+}
 
-        <motion.header initial="hidden" animate="show" variants={fadeUp(shouldReduceMotion)} className="relative z-20 mx-auto flex w-full max-w-6xl items-center justify-between border-b border-white/10 px-6 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-white/64 sm:px-10 sm:py-4 sm:text-xs lg:px-12">
-          <div className="flex items-center gap-6">
-            <a href="./index.html" className="text-white/90 transition hover:text-white">Bruniverse</a>
-            <nav className="hidden items-center gap-5 text-white/58 lg:flex lg:gap-7">
-              {siteNavItems.map((item) => <a key={item.href} className="whitespace-nowrap transition hover:text-sky-100" href={item.href}>{item.label}</a>)}
-            </nav>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="hidden text-right text-sky-100/76 sm:inline">VBE 1014</span>
-            <ThemeToggle />
-          </div>
-        </motion.header>
+export default function ActionPage({ data }) {
+  const metrics = getMetrics(data);
 
-        <div className="relative z-10">
-          {/* Hero */}
-          <section className="relative overflow-hidden px-6 pt-16 pb-20 sm:px-10 sm:pt-24 sm:pb-28 lg:px-12 lg:pt-32 lg:pb-36">
-            <div className="mx-auto max-w-6xl">
-              <motion.div initial="hidden" animate="show" variants={{ hidden: {}, show: { transition: { delayChildren: 0.1, staggerChildren: 0.1 } } }} className="grid gap-8">
-                <motion.p variants={fadeUp(shouldReduceMotion)} className="text-xs font-semibold uppercase tracking-[0.2em] text-white/35">
-                  {data.member} · {data.sdg}
+  return (
+    <StaticPageShell transitionKey={data.id} activeHref="./act-now.html">
+      {(shouldReduceMotion) => (
+        <>
+          <section className="relative px-5 pt-10 pb-12 sm:px-8 sm:pt-16 sm:pb-16 lg:px-12 lg:pt-20">
+            <motion.div
+              initial="hidden"
+              animate="show"
+              variants={stagger(shouldReduceMotion, 0.08, 0.08)}
+              className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(320px,470px)] lg:items-end"
+            >
+              <div className="min-w-0">
+                <motion.a
+                  variants={fadeUp(shouldReduceMotion)}
+                  href="./act-now.html"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-white/54 transition hover:text-white"
+                >
+                  <ArrowLeft size={16} strokeWidth={2} aria-hidden="true" />
+                  Back to Act Now
+                </motion.a>
+                <motion.p variants={fadeUp(shouldReduceMotion)} className="mt-8 text-sm font-semibold text-sky-100/78">
+                  {data.member} / {data.sdg}
                 </motion.p>
-                <motion.h1 variants={fadeUp(shouldReduceMotion)} className="text-[clamp(2.8rem,7vw,4.8rem)] font-extrabold leading-[0.92] tracking-[-0.04em] [text-wrap:balance]">
+                <motion.h1
+                  variants={fadeUp(shouldReduceMotion)}
+                  className="mt-5 max-w-4xl break-words text-[clamp(2.35rem,8vw,5.2rem)] font-semibold leading-[0.98] text-white"
+                >
                   {data.action}
                 </motion.h1>
-                <motion.p variants={fadeUp(shouldReduceMotion)} className="max-w-[640px] text-xl font-medium leading-[1.45] text-white/68 sm:text-2xl">
-                  {data.explanation.slice(0, 200)}...
+                <motion.p
+                  variants={fadeUp(shouldReduceMotion)}
+                  className="mt-6 max-w-2xl text-base leading-7 text-white/70 sm:text-lg"
+                >
+                  {data.explanation}
                 </motion.p>
-              </motion.div>
-            </div>
+              </div>
+
+              <motion.figure
+                variants={fadeUp(shouldReduceMotion)}
+                className="overflow-hidden rounded-lg border border-white/12 bg-white/[0.04]"
+              >
+                <img src={data.image} alt={data.action} className="aspect-[4/3] w-full object-cover" loading="lazy" />
+                <figcaption className="border-t border-white/10 px-4 py-3 text-xs leading-5 text-white/42">
+                  {data.imageCaption}
+                </figcaption>
+              </motion.figure>
+            </motion.div>
           </section>
 
-          <div className="mx-auto max-w-6xl px-6 sm:px-10 lg:px-12">
-            <div className="grid gap-32 sm:gap-40">
-              {/* Action details */}
-              <motion.section id="action-detail" initial="hidden" whileInView="show" viewport={{ once: true, margin: "-120px" }} variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}>
-                {/* Full explanation + image */}
-                <motion.div variants={fadeUp(shouldReduceMotion)} className="mb-16">
-                  <div className="grid gap-10 lg:grid-cols-[1fr_400px] lg:gap-16">
+          <section className="relative border-y border-white/12 bg-[#0d0d10] px-5 py-10 sm:px-8 sm:py-14 lg:px-12">
+            <motion.div
+              initial="hidden"
+              animate="show"
+              variants={stagger(shouldReduceMotion)}
+              className="mx-auto grid max-w-7xl gap-4 md:grid-cols-2 xl:grid-cols-4"
+            >
+              <SummaryCard
+                icon={Gauge}
+                label="Baseline"
+                value={`${metrics.before.toFixed(2)}t`}
+                detail="Per-capita annual emissions before the selected action."
+                shouldReduceMotion={shouldReduceMotion}
+              />
+              <SummaryCard
+                icon={Leaf}
+                label="After action"
+                value={`${metrics.after.toFixed(2)}t`}
+                detail="Per-capita annual emissions after behaviour changes."
+                shouldReduceMotion={shouldReduceMotion}
+              />
+              <SummaryCard
+                icon={Target}
+                label="Reduction"
+                value={`${metrics.reduction.toFixed(2)}t`}
+                detail={`${metrics.percent.toFixed(0)}% lower than the baseline result.`}
+                shouldReduceMotion={shouldReduceMotion}
+              />
+              <SummaryCard
+                icon={Calculator}
+                label="Calculator proof"
+                value={metrics.screenshots ? String(metrics.screenshots) : "Needed"}
+                detail={
+                  metrics.screenshots
+                    ? "Screenshots document the calculator landing page, inputs, and final result."
+                    : "Calculator screenshots still need to be attached before submission."
+                }
+                shouldReduceMotion={shouldReduceMotion}
+              />
+            </motion.div>
+          </section>
+
+          <section id="action-detail" className="relative px-5 py-12 sm:px-8 sm:py-16 lg:px-12 lg:py-20">
+            <motion.div
+              initial="hidden"
+              animate="show"
+              variants={stagger(shouldReduceMotion)}
+              className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)]"
+            >
+              <TextBlock
+                eyebrow="Action mechanism"
+                title="How this action lowers emissions"
+                copy={data.mechanism}
+                shouldReduceMotion={shouldReduceMotion}
+              />
+              <TextBlock
+                eyebrow="Implementation"
+                title="How it can be practised in daily life"
+                copy={data.example}
+                shouldReduceMotion={shouldReduceMotion}
+              />
+            </motion.div>
+          </section>
+
+          <section className="relative border-y border-white/12 bg-[#0d0d10] px-5 py-12 sm:px-8 sm:py-16 lg:px-12 lg:py-20">
+            <motion.div
+              initial="hidden"
+              animate="show"
+              variants={stagger(shouldReduceMotion)}
+              className="mx-auto max-w-7xl"
+            >
+              <motion.div variants={fadeUp(shouldReduceMotion)} className="mb-7 max-w-3xl">
+                <p className="text-sm font-semibold text-sky-100/76">Co-benefits</p>
+                <h2 className="mt-3 text-2xl font-semibold leading-tight text-white sm:text-4xl">
+                  The action creates environmental and social value together.
+                </h2>
+              </motion.div>
+              <div className="grid gap-x-8 gap-y-5 md:grid-cols-2">
+                {data.coBenefits.map((benefit, index) => (
+                  <motion.article key={benefit.title} variants={fadeUp(shouldReduceMotion)} className="flex gap-4">
+                    <span className="mt-1 font-mono text-sm font-semibold tabular-nums text-white/30">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
                     <div>
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/30">Purpose of this action</p>
-                      <p className="mt-4 text-base font-medium leading-[1.6] text-white/70">{data.explanation}</p>
+                      <h3 className="text-base font-semibold text-white/86">{benefit.title}</h3>
+                      <p className="mt-2 text-sm leading-6 text-white/56">{benefit.desc}</p>
                     </div>
-                    <div className="flex flex-col gap-3">
-                      <div className="overflow-hidden rounded-lg">
-                        <img src={data.image} alt={data.action} className="aspect-[4/3] w-full object-cover" loading="lazy" />
-                      </div>
-                      <span className="text-[11px] font-medium uppercase tracking-[0.08em] text-white/20">{data.imageCaption}</span>
-                    </div>
-                  </div>
-                </motion.div>
+                  </motion.article>
+                ))}
+              </div>
+            </motion.div>
+          </section>
 
-                <motion.div variants={fadeUp(shouldReduceMotion)} className="mb-16 max-w-[720px]">
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/35">How it works</p>
-                  <p className="mt-3 text-sm font-medium leading-[1.7] text-white/62">{data.mechanism}</p>
+          {data.offsetSolutions && data.offsetSolutions.length > 0 && (
+            <section id="offset-solutions" className="relative px-5 py-12 sm:px-8 sm:py-16 lg:px-12 lg:py-20">
+              <motion.div
+                initial="hidden"
+                animate="show"
+                variants={stagger(shouldReduceMotion)}
+                className="mx-auto max-w-7xl"
+              >
+                <motion.div variants={fadeUp(shouldReduceMotion)} className="mb-7 max-w-3xl">
+                  <p className="text-sm font-semibold text-sky-100/76">Evidence and offset plan</p>
+                  <h2 className="mt-3 text-2xl font-semibold leading-tight text-white sm:text-4xl">
+                    Action claims need implementation records.
+                  </h2>
+                  <p className="mt-4 text-base leading-7 text-white/62">
+                    These records connect the chosen UN action with implementation details, supporting evidence, and a credibility explanation. Add dated photos, app logs, tickets, repair records, or recycling receipts before final submission.
+                  </p>
                 </motion.div>
-
-                <motion.div variants={fadeUp(shouldReduceMotion)} className="mb-16 max-w-[720px]">
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/35">In practice</p>
-                  <p className="mt-3 text-sm font-medium leading-[1.7] text-white/62">{data.example}</p>
-                </motion.div>
-
-                {/* Co-benefits */}
-                <div className="mb-16">
-                  <p className="mb-10 text-xs font-semibold uppercase tracking-[0.18em] text-white/28">Co-benefits</p>
-                  <div className="grid gap-x-10 gap-y-6 sm:grid-cols-2">
-                    {data.coBenefits.map((benefit, i) => (
-                      <motion.div key={i} variants={fadeUp(shouldReduceMotion)} className="flex gap-5">
-                        <span className="shrink-0 mt-0.5 font-mono text-sm font-bold tabular-nums text-white/30">{String(i + 1).padStart(2, "0")}</span>
-                        <div>
-                          <h4 className="text-sm font-bold text-white/74">{benefit.title}</h4>
-                          <p className="mt-2 text-sm leading-relaxed text-white/48">{benefit.desc}</p>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
+                <div className="grid gap-4 md:grid-cols-3">
+                  {data.offsetSolutions.map((solution, index) => (
+                    <EvidenceCard
+                      key={solution.title}
+                      solution={solution}
+                      index={index}
+                      shouldReduceMotion={shouldReduceMotion}
+                    />
+                  ))}
                 </div>
-              </motion.section>
+              </motion.div>
+            </section>
+          )}
 
-              {/* Carbon offset solutions */}
-              {data.offsetSolutions && data.offsetSolutions.length > 0 && (
-                <motion.section id="offset-solutions" initial="hidden" whileInView="show" viewport={{ once: true, margin: "-120px" }} variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}>
-                  <p className="mb-10 text-xs font-semibold uppercase tracking-[0.2em] text-white/35">Carbon offset solutions</p>
-                  <motion.p variants={fadeUp(shouldReduceMotion)} className="mb-12 max-w-[720px] text-base font-medium leading-[1.6] text-white/58">
-                    These three responses compensate for unavoidable emissions connected to the selected action while also changing the daily behaviour that created the footprint.
-                  </motion.p>
-                  <div className="grid gap-4 md:grid-cols-3">
-                    {data.offsetSolutions.map((solution, i) => (
-                      <motion.article key={solution.title} variants={fadeUp(shouldReduceMotion)} className="rounded-lg border border-white/10 bg-white/[0.035] p-6">
-                        <p className="font-mono text-xs font-bold tabular-nums text-white/24">{String(i + 1).padStart(2, "0")}</p>
-                        <h3 className="mt-6 text-xl font-extrabold leading-tight text-white">{solution.title}</h3>
-                        <p className="mt-4 text-sm font-medium leading-6 text-white/56">{solution.desc}</p>
-                        <div className="mt-7 border-t border-white/10 pt-5">
-                          <div className="flex items-center gap-4">
-                            <div className="grid h-14 w-14 shrink-0 place-items-center rounded-full border border-sky-100/20 bg-sky-100/[0.07] text-sm font-extrabold text-sky-100/78">
-                              JH
-                            </div>
-                            <p className="text-xs font-medium leading-5 text-white/32">{solution.evidence}</p>
-                          </div>
-                        </div>
-                      </motion.article>
-                    ))}
-                  </div>
-                </motion.section>
+          <section id="calculator" className="relative border-y border-white/12 bg-[#0d0d10] px-5 py-12 sm:px-8 sm:py-16 lg:px-12 lg:py-20">
+            <motion.div
+              initial="hidden"
+              animate="show"
+              variants={stagger(shouldReduceMotion)}
+              className="mx-auto max-w-7xl"
+            >
+              <motion.div variants={fadeUp(shouldReduceMotion)} className="mb-8 max-w-3xl">
+                <p className="text-sm font-semibold text-sky-100/76">Carbon Footprint Calculator</p>
+                <h2 className="mt-3 text-2xl font-semibold leading-tight text-white sm:text-4xl">
+                  The numerical result supports the personal response.
+                </h2>
+                {data.calculator.description && (
+                  <p className="mt-4 text-base leading-7 text-white/62">{data.calculator.description}</p>
+                )}
+              </motion.div>
+
+              {data.calculator.calculatorImage && (
+                <motion.figure variants={fadeUp(shouldReduceMotion)} className="mb-10 overflow-hidden rounded-lg border border-white/12 bg-black/18 p-3">
+                  <img
+                    src={data.calculator.calculatorImage}
+                    alt="Carbon Footprint Calculator"
+                    className="max-h-[420px] w-full object-contain"
+                    loading="lazy"
+                  />
+                  <figcaption className="mt-3 text-xs leading-5 text-white/36">
+                    Source: United Nations online platform for voluntary cancellation of certified emission reductions (CERs)
+                  </figcaption>
+                </motion.figure>
               )}
 
-              {/* Calculator */}
-              <motion.section id="calculator" initial="hidden" whileInView="show" viewport={{ once: true, margin: "-120px" }} variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}>
-                <p className="mb-10 text-xs font-semibold uppercase tracking-[0.2em] text-white/35">Carbon Footprint Calculator</p>
-                {data.calculator.description && (
-                  <motion.p variants={fadeUp(shouldReduceMotion)} className="mb-14 max-w-[640px] text-base font-medium leading-[1.55] text-white/54">
-                    {data.calculator.description}
-                  </motion.p>
-                )}
-                {data.calculator.calculatorImage && (
-                  <motion.div variants={fadeUp(shouldReduceMotion)} className="mb-16">
-                    <div className="inline-block overflow-hidden rounded-lg">
-                      <img src={data.calculator.calculatorImage} alt="Carbon Footprint Calculator" className="max-h-[420px] w-full object-contain" loading="lazy" />
-                    </div>
-                    <span className="mt-2 block text-[11px] font-medium uppercase tracking-[0.08em] text-white/18">Source: United Nations online platform for voluntary cancellation of certified emission reductions (CERs)</span>
-                  </motion.div>
-                )}
-                <CarbonFootprintCalculator staticData={data.calculator} />
+              <CarbonFootprintCalculator staticData={data.calculator} />
 
-                {/* Screenshot evidence */}
-                {data.calculator.screenshots && data.calculator.screenshots.length > 0 && (
-                  <div className="mt-16">
-                    <p className="mb-6 text-xs font-semibold uppercase tracking-[0.16em] text-white/28">Calculator process — step-by-step screenshots</p>
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      {data.calculator.screenshots.map((src, i) => (
-                        <motion.div key={i} variants={fadeUp(shouldReduceMotion)} className="overflow-hidden rounded-lg bg-white/[0.02]">
-                          <img src={src} alt={`Screenshot step ${i + 1}`} className="aspect-[16/10] w-full object-contain" loading="lazy" />
-                        </motion.div>
-                      ))}
-                    </div>
-                    <p className="mt-3 text-[11px] font-medium uppercase tracking-[0.08em] text-white/18">
-                      Source: United Nations online platform for voluntary cancellation of certified emission reductions (CERs)
+              {data.calculator.screenshots && data.calculator.screenshots.length > 0 ? (
+                <motion.div variants={fadeUp(shouldReduceMotion)} className="mt-12">
+                  <div className="mb-5 flex items-center gap-3">
+                    <ClipboardCheck size={18} strokeWidth={1.9} className="text-white/58" aria-hidden="true" />
+                    <p className="text-sm font-semibold text-white/66">
+                      Calculator screenshots: landing page, inputs, and final result
                     </p>
                   </div>
-                )}
-              </motion.section>
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {data.calculator.screenshots.map((src, index) => (
+                      <figure key={src} className="overflow-hidden rounded-lg border border-white/10 bg-black/18">
+                        <img src={src} alt={`Calculator screenshot ${index + 1}`} className="aspect-[16/10] w-full object-contain" loading="lazy" />
+                      </figure>
+                    ))}
+                  </div>
+                  <p className="mt-4 text-xs leading-5 text-white/34">
+                    Source: United Nations online platform for voluntary cancellation of certified emission reductions (CERs)
+                  </p>
+                </motion.div>
+              ) : (
+                <motion.div
+                  variants={fadeUp(shouldReduceMotion)}
+                  className="mt-12 rounded-lg border border-amber-200/18 bg-amber-200/[0.055] p-5"
+                >
+                  <div className="flex items-center gap-3">
+                    <ClipboardCheck size={18} strokeWidth={1.9} className="text-amber-100/70" aria-hidden="true" />
+                    <p className="text-sm font-semibold text-amber-50/82">
+                      Calculator screenshots still needed
+                    </p>
+                  </div>
+                  <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                    {[
+                      "Calculator landing page",
+                      "All input steps",
+                      "Final CO2e result",
+                    ].map((item) => (
+                      <div key={item} className="rounded-lg border border-white/10 bg-black/18 px-4 py-3 text-sm font-semibold text-white/62">
+                        {item}
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </motion.div>
+          </section>
 
-              {/* References */}
-              <motion.section id="references" initial="hidden" whileInView="show" viewport={{ once: true, margin: "-120px" }} variants={{ hidden: {}, show: { transition: { staggerChildren: 0.03 } } }}>
-                <p className="mb-10 text-xs font-semibold uppercase tracking-[0.2em] text-white/35">References</p>
-                <ol className="max-w-[800px] space-y-4 text-sm leading-relaxed text-white/44 [counter-reset:ref]">
-                  {data.references.map((ref, i) => (
-                    <motion.li key={i} variants={fadeUp(shouldReduceMotion)} className="flex gap-4 [counter-increment:ref] before:content-[counter(ref,decimal-leading-zero)] before:shrink-0 before:font-mono before:text-xs before:font-bold before:text-white/18">
-                      <span>{ref}</span>
-                    </motion.li>
-                  ))}
-                </ol>
-              </motion.section>
-            </div>
-          </div>
-
-          <footer className="mx-auto mt-36 max-w-6xl border-t border-white/[0.05] px-6 py-10 sm:mt-44 sm:px-10 sm:py-12 lg:px-12">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/24">SDG Intelligence Hub &mdash; VBE 1014</p>
-              <p className="text-xs font-medium text-white/20">Educational content. Verify against UN official sources for research use.</p>
-            </div>
-          </footer>
-        </div>
-      </main>
-    </PageTransition>
+          <section id="references" className="relative px-5 py-12 sm:px-8 sm:py-16 lg:px-12 lg:py-20">
+            <motion.div
+              initial="hidden"
+              animate="show"
+              variants={stagger(shouldReduceMotion, 0.03)}
+              className="mx-auto max-w-7xl"
+            >
+              <motion.div variants={fadeUp(shouldReduceMotion)} className="mb-7 max-w-3xl">
+                <p className="text-sm font-semibold text-sky-100/76">References</p>
+                <h2 className="mt-3 text-2xl font-semibold leading-tight text-white sm:text-4xl">
+                  Sources used for this action report.
+                </h2>
+              </motion.div>
+              <ol className="max-w-4xl space-y-4 text-sm leading-6 text-white/58 [counter-reset:ref]">
+                {data.references.map((ref) => (
+                  <motion.li
+                    key={ref}
+                    variants={fadeUp(shouldReduceMotion)}
+                    className="flex min-w-0 gap-4 [counter-increment:ref] before:shrink-0 before:font-mono before:text-xs before:font-semibold before:text-white/30 before:content-[counter(ref,decimal-leading-zero)]"
+                  >
+                    <CheckCircle2 size={16} strokeWidth={1.8} className="mt-1 shrink-0 text-white/24" aria-hidden="true" />
+                    <span className="min-w-0 break-words">{ref}</span>
+                  </motion.li>
+                ))}
+              </ol>
+            </motion.div>
+          </section>
+        </>
+      )}
+    </StaticPageShell>
   );
 }

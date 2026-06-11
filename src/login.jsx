@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import PageTransition from "./components/motion/PageTransition";
@@ -26,7 +26,7 @@ const roleOptions = ["Student", "Educator", "Researcher", "Other"];
 const interestOptions = [
   "Quality Education",
   "Climate Action",
-  "Good Health and Well-being",
+  "Zero Hunger",
   "Peace, Justice and Strong Institutions",
   "Inequality and Justice",
   "General Sustainability Research",
@@ -35,6 +35,90 @@ const interestOptions = [
 const choiceButtonClass =
   "rounded-lg border px-3 py-2 text-left text-sm font-semibold leading-snug transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-200";
 
+const AUTH_USERS_KEY = "bruniverse-auth-users";
+const AUTH_SESSION_KEY = "bruniverse-auth-session";
+
+function normalizeIdentifier(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function readUsers() {
+  try {
+    const raw = window.localStorage.getItem(AUTH_USERS_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeUsers(users) {
+  window.localStorage.setItem(AUTH_USERS_KEY, JSON.stringify(users));
+}
+
+function toPublicUser(user) {
+  if (!user) return null;
+  return {
+    id: user.id,
+    fullName: user.fullName,
+    email: user.email,
+    role: user.role,
+    interests: user.interests || [],
+  };
+}
+
+function saveSession(user) {
+  window.localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(toPublicUser(user)));
+}
+
+function loadSession() {
+  try {
+    const raw = window.localStorage.getItem(AUTH_SESSION_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function clearSession() {
+  window.localStorage.removeItem(AUTH_SESSION_KEY);
+}
+
+function findUser(identifier) {
+  const normalized = normalizeIdentifier(identifier);
+  return readUsers().find(
+    (user) =>
+      normalizeIdentifier(user.email) === normalized ||
+      normalizeIdentifier(user.fullName) === normalized,
+  );
+}
+
+function isValidEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || "").trim());
+}
+
+function createUser(signupData) {
+  const email = signupData.email.trim();
+  const users = readUsers();
+
+  if (users.some((user) => normalizeIdentifier(user.email) === normalizeIdentifier(email))) {
+    throw new Error("This email is already registered. Please log in instead.");
+  }
+
+  const user = {
+    id: `user-${Date.now()}`,
+    fullName: signupData.fullName.trim(),
+    email,
+    role: signupData.role,
+    interests: signupData.interests,
+    password: signupData.password,
+    createdAt: new Date().toISOString(),
+  };
+
+  writeUsers([...users, user]);
+  saveSession(user);
+  return toPublicUser(user);
+}
 
 function FormField({ label, children }) {
   return (
@@ -66,15 +150,22 @@ function LoginForm({ onSwitchMode, onLoginSuccess }) {
     const identifier = String(data.get("identifier") || "").trim();
     const password = String(data.get("password") || "");
 
-    // Development-only mock login. Replace this with real authentication before production.
-    if (identifier === "1" && password === "1") {
-      setMessage("");
-      form.reset();
-      onLoginSuccess();
+    const user = findUser(identifier);
+
+    if (!user) {
+      setMessage("No account was found for this email or name. Please sign up first.");
       return;
     }
 
-    setMessage("Invalid username or password.");
+    if (user.password !== password) {
+      setMessage("Invalid password.");
+      return;
+    }
+
+    saveSession(user);
+    setMessage("");
+    form.reset();
+    onLoginSuccess(toPublicUser(user));
   }
 
   return (
@@ -133,7 +224,7 @@ function DashboardPage({ onLogout }) {
   return <ResearchWorkspace onLogout={onLogout} />;
 }
 
-function SignUpForm({ onSwitchMode }) {
+function SignUpForm({ onSwitchMode, onSignupSuccess }) {
   const [message, setMessage] = useState("");
   const [signupData, setSignupData] = useState({
     role: "Student",
@@ -161,9 +252,21 @@ function SignUpForm({ onSwitchMode }) {
   function canProceed(step) {
     setMessage("");
 
-    if (step === 2 && (!signupData.fullName.trim() || !signupData.email.trim())) {
-      setMessage("Please enter your full name and email before continuing.");
-      return false;
+    if (step === 2) {
+      if (!signupData.fullName.trim() || !signupData.email.trim()) {
+        setMessage("Please enter your full name and email before continuing.");
+        return false;
+      }
+
+      if (!isValidEmail(signupData.email)) {
+        setMessage("Please enter a valid email address.");
+        return false;
+      }
+
+      if (readUsers().some((user) => normalizeIdentifier(user.email) === normalizeIdentifier(signupData.email))) {
+        setMessage("This email is already registered. Please log in instead.");
+        return false;
+      }
     }
 
     if (step === 4) {
@@ -176,21 +279,25 @@ function SignUpForm({ onSwitchMode }) {
         setMessage("Passwords do not match.");
         return false;
       }
+
+      if (signupData.password.length < 6) {
+        setMessage("Please use at least 6 characters for the password.");
+        return false;
+      }
     }
 
     return true;
   }
 
   function handleComplete() {
-    console.log("Sign up placeholder", {
-      fullName: signupData.fullName.trim(),
-      email: signupData.email.trim(),
-      role: signupData.role,
-      interests: signupData.interests,
-    });
-
-    setSignupData((current) => ({ ...current, password: "", confirmPassword: "" }));
-    setMessage("Sign up placeholder: account setup is complete. Authentication is not connected yet.");
+    try {
+      const user = createUser(signupData);
+      setSignupData((current) => ({ ...current, password: "", confirmPassword: "" }));
+      setMessage("");
+      onSignupSuccess(user);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Unable to create the account.");
+    }
   }
 
   return (
@@ -316,7 +423,7 @@ function SignUpForm({ onSwitchMode }) {
             <div>
               <h2 className="text-xl font-bold leading-tight text-white">Security</h2>
               <p className="mt-2 text-sm font-medium leading-relaxed text-white/62">
-                This prototype checks the fields locally and does not connect to authentication yet.
+                Your account will be saved in this browser for the project demo.
               </p>
             </div>
 
@@ -351,7 +458,7 @@ function SignUpForm({ onSwitchMode }) {
             <div>
               <h2 className="text-xl font-bold leading-tight text-white">You are ready to explore.</h2>
               <p className="mt-2 text-sm font-medium leading-relaxed text-white/62">
-                Your account setup is complete. Authentication is not connected yet, so this is currently a frontend-only prototype.
+                Complete sign up to open your SDG research workspace.
               </p>
             </div>
 
@@ -389,19 +496,29 @@ function SignUpForm({ onSwitchMode }) {
 
 function LoginPage() {
   const [mode, setMode] = useState("login");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   const shouldReduceMotion = useReducedMotion();
   const isSignUp = mode === "signup";
 
+  useEffect(() => {
+    setCurrentUser(loadSession());
+  }, []);
+
+  function handleLogout() {
+    clearSession();
+    setCurrentUser(null);
+    setMode("login");
+  }
+
   return (
     <AnimatePresence mode="wait" initial={false}>
-      {isLoggedIn ? (
+      {currentUser ? (
         <PageTransition
           key="dashboard"
           transitionKey="dashboard"
           shouldReduceMotion={shouldReduceMotion}
         >
-          <DashboardPage onLogout={() => setIsLoggedIn(false)} />
+          <DashboardPage onLogout={handleLogout} />
         </PageTransition>
       ) : (
         <PageTransition
@@ -439,11 +556,14 @@ function LoginPage() {
                 </div>
 
                 {isSignUp ? (
-                  <SignUpForm onSwitchMode={() => setMode("login")} />
+                  <SignUpForm
+                    onSwitchMode={() => setMode("login")}
+                    onSignupSuccess={(user) => setCurrentUser(user)}
+                  />
                 ) : (
                   <LoginForm
                     onSwitchMode={() => setMode("signup")}
-                    onLoginSuccess={() => setIsLoggedIn(true)}
+                    onLoginSuccess={(user) => setCurrentUser(user)}
                   />
                 )}
               </motion.div>

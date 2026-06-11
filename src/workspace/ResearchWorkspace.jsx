@@ -47,6 +47,16 @@ import NoteLinkPicker from "./notes/NoteLinkPicker";
 
 const motionEase = [0.23, 1, 0.32, 1];
 
+const hashViewMap = {
+  "#overview": "overview",
+  "#datasets-section": "overview",
+  "#dataset-hub": "overview",
+  "#literature": "literature",
+  "#notes": "notes",
+  "#graph": "graph",
+  "#chat": "chat",
+};
+
 function StarfieldBackground() {
   return (
     <div className="pointer-events-none absolute inset-[-5vh] z-0">
@@ -84,6 +94,27 @@ function ViewTransition({ children, className = "" }) {
 
 function WorkspaceContent({ onLogout }) {
   const { state, dispatch } = useWorkspace();
+
+  useEffect(() => {
+    function syncViewFromHash() {
+      const hash = window.location.hash;
+      const nextView = hashViewMap[hash];
+
+      if (nextView && state.activeView !== nextView) {
+        dispatch({ type: "SET_ACTIVE_VIEW", payload: nextView });
+      }
+
+      if (hash === "#datasets-section" || hash === "#dataset-hub") {
+        window.setTimeout(() => {
+          document.getElementById("datasets-section")?.scrollIntoView({ block: "start" });
+        }, 160);
+      }
+    }
+
+    syncViewFromHash();
+    window.addEventListener("hashchange", syncViewFromHash);
+    return () => window.removeEventListener("hashchange", syncViewFromHash);
+  }, [state.activeView, dispatch]);
 
   // Auto-select most recent note when entering notes view with nothing selected
   useEffect(() => {
