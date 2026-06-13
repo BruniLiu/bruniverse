@@ -413,8 +413,8 @@ export const sdgDetails = {
           },
           {
             title: "Clean energy progress does not automatically erase risk",
-            image: "/images/sdg13/sdg13-solar-golmud.jpg",
-            imageCaption: "Source: Planet Labs via Wikimedia Commons - Golmud solar farm, China",
+            image: "/images/sdg13/image4.jpeg",
+            imageCaption: "Visual: urban infrastructure and transport demand in a high-growth city",
             content:
               "China is also a major clean-energy investor. Solar, wind, batteries, electric vehicles, and grid technologies show that climate action can create prosperity rather than only sacrifice. However, renewable expansion does not immediately remove climate risk because existing fossil-fuel assets, urban heat exposure, industrial demand, and consumption patterns continue to shape emissions. The transition challenge is to make clean energy replace high-carbon activity, not simply grow beside it. This requires policy integration, technology, finance, behaviour change, and support for workers and regions affected by industrial restructuring.",
           },
@@ -429,8 +429,8 @@ export const sdgDetails = {
         challenges: [
           {
             title: "Why: emissions, urbanisation, and locked-in infrastructure",
-            image: "/images/sdg13/sdg13-coal-power.jpg",
-            imageCaption: "Source: Wikimedia Commons - coal-fired power infrastructure",
+            image: "/images/sdg13/image3.png",
+            imageCaption: "Visual: industrial emissions beside urban and agricultural land",
             content:
               "The root causes include global greenhouse gas accumulation and domestic development choices. Coal-fired electricity, heavy industry, urban construction, transport growth, and energy-intensive production all contribute to emissions. The IPCC states that human activities have unequivocally caused global warming, with global surface temperature reaching about 1.1 degrees Celsius above 1850-1900 levels in 2011-2020 (IPCC, 2023). In China, this scientific reality meets a development structure where some regions still depend on fossil-fuel industries for employment, revenue, and energy security. That makes climate action a social transition problem as well as an environmental problem.",
           },
@@ -445,15 +445,15 @@ export const sdgDetails = {
           },
           {
             title: "Who: unequal exposure and unequal capacity to adapt",
-            image: "/images/sdg13/sdg13-urban-heat-island.png",
-            imageCaption: "Source: U.S. EPA via Wikimedia Commons - heat island risk pattern",
+            image: "/images/sdg13/image6.jpeg",
+            imageCaption: "Visual: coastal and water-edge exposure as climate risk becomes spatial",
             content:
               "The people most affected are not always the people most responsible for emissions. Elderly people, children, outdoor workers, delivery riders, farmers, low-income households, and coastal residents often face higher exposure or weaker ability to adapt. Rural farmers face crop and water risks; coastal cities face flood and infrastructure pressure; workers in high-emission sectors face uncertainty during industrial transition. Governments, energy companies, construction firms, transport systems, schools, and households all shape whether climate policy becomes fair and practical. A just response must therefore combine mitigation with adaptation and social protection.",
           },
           {
             title: "What prosperity would look like",
-            image: "/images/sdg13/sdg13-solar-golmud.jpg",
-            imageCaption: "Source: Planet Labs via Wikimedia Commons - solar infrastructure in China",
+            image: "/images/sdg13/image7.jpg",
+            imageCaption: "Visual: public transport as a practical low-carbon prosperity pathway",
             content:
               "Prosperity under SDG 13 is not simply lower emissions. It also means cleaner air, safer cities, lower heat-health vulnerability, resilient food systems, efficient buildings, reliable public transport, and jobs in low-carbon industries. Climate action becomes credible when people can see these co-benefits in daily life. For China, this means using clean energy growth, urban planning, emergency warning systems, school education, and public participation to make the transition understandable and useful for ordinary communities.",
           },
@@ -464,8 +464,8 @@ export const sdgDetails = {
         label: "Personal Response",
         type: "action",
         action: "Build low-carbon and heat-safe routines",
-        image: "/images/sdg13/sdg13-solar-golmud.jpg",
-        imageCaption: "Source: Planet Labs via Wikimedia Commons - solar farm in Golmud, China",
+        image: "/images/sdg13/image5.jpg",
+        imageCaption: "Visual: small-scale planting and local adaptation practice",
         explanation:
           "A student or small group cannot solve national emissions alone, but it can turn SDG 13 into visible campus and community practice. The most useful response is to combine mitigation, adaptation, and communication: reduce avoidable emissions, prepare for climate hazards, and help people understand the data behind the risk.",
         mechanism:
