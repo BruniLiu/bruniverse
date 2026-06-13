@@ -1,6 +1,7 @@
 node_modules
 dist
 /data/
+/submission-captures/
 .env
 .env.local
 .DS_Store
