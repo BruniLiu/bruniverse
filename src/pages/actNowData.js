@@ -1,3 +1,169 @@
+const unfcccProcessStepFiles = [
+  "01-intro-first.png",
+  "02-home-00.png",
+  "03-home-03.png",
+  "04-home-08-1.png",
+  "05-home-10.png",
+  "06-transport-27.png",
+  "07-transport-20.png",
+  "08-transport-30-2.png",
+  "09-lifestyle-47-1.png",
+  "10-lifestyle-44-1.png",
+  "11-lifestyle-40-1.png",
+  "12-diet-50.png",
+  "13-intro-last.png",
+];
+
+const makeUnfcccCalculatorEvidence = ({
+  member,
+  totalTonnes,
+  totalKg,
+  resultImage,
+  sectors,
+  assumptions,
+}) => ({
+  title: `${member} UNFCCC Lifestyle Calculator result`,
+  sourceLabel: "Lifestyle Calculator by Doconomy and the UNFCCC Secretariat",
+  sourceUrl: "https://lifestylecalculator.com/unfccc",
+  methodologyUrl: "https://lifestylecalculator.com/files/MethodLifestyleCalculator.pdf",
+  resultImage,
+  totalTonnes,
+  totalKg,
+  profile: "Climate expert",
+  generatedAt: "2026-06-13",
+  note:
+    `This official calculator run is ${member}'s individual carbon-footprint evidence for the Act Now section. It models a China-based student lifestyle and connects the selected action with a visible CO2e result (UN Climate Change & Doconomy, n.d.).`,
+  sourceNote:
+    "Calculator source: Lifestyle Calculator by Doconomy and the UNFCCC Secretariat. The member-specific process screenshots document each calculator step, while the final result screenshot and listed input assumptions identify the individual calculation.",
+  references: [
+    "UN Climate Change & Doconomy. (n.d.). Lifestyle Calculator by Doconomy and the UNFCCC Secretariat. https://lifestylecalculator.com/unfccc",
+    "UN Climate Change & Doconomy. (2026). Method Lifestyle Calculator. https://lifestylecalculator.com/files/MethodLifestyleCalculator.pdf",
+  ],
+  sectors,
+  assumptions,
+});
+
+const makeUnfcccScreenshots = (memberSlug, resultImage) => [
+  ...unfcccProcessStepFiles.map((file) => `/images/act-now/un-calculator/member-process/${memberSlug}/${file}`),
+  resultImage,
+];
+
+const unfcccCalculatorEvidenceByMember = {
+  janet: makeUnfcccCalculatorEvidence({
+    member: "Janet (Hou Yuheng)",
+    totalTonnes: "2.69",
+    totalKg: "2694.60",
+    resultImage: "/images/act-now/un-calculator/member-results/janet-unfccc-result.png",
+    sectors: [
+      { label: "Transport", value: "0.57t" },
+      { label: "Home", value: "1.00t" },
+      { label: "Shopping", value: "0.38t" },
+      { label: "Food", value: "0.74t" },
+    ],
+    assumptions: [
+      "Country of residence: China",
+      "Household renewable electricity: I do not know",
+      "Primary heating: district heating; cooking gas: yes",
+      "Car ownership: no",
+      "Flights in last 12 months: 0 short, 0 medium, 0 long",
+      "Public transport: 90 minutes per day",
+      "Annual lifestyle spending: furniture 0, sports/cultural events 400, beauty/hairdresser/spa 200",
+      "Appliances bought in past 12 months: 0 large, 0 medium, 0 small",
+      "Past 6 months clothing: 3 new clothes, 1 second-hand clothes, 1 new pair of shoes",
+      "Diet: I do not eat red meat",
+    ],
+  }),
+  irene: makeUnfcccCalculatorEvidence({
+    member: "Irene (Han Yutong)",
+    totalTonnes: "2.13",
+    totalKg: "2128.64",
+    resultImage: "/images/act-now/un-calculator/member-results/irene-unfccc-result.png",
+    sectors: [
+      { label: "Transport", value: "0.15t" },
+      { label: "Home", value: "1.00t" },
+      { label: "Shopping", value: "0.25t" },
+      { label: "Food", value: "0.73t" },
+    ],
+    assumptions: [
+      "Country of residence: China",
+      "Household renewable electricity: I do not know",
+      "Primary heating: district heating; cooking gas: yes",
+      "Car ownership: no",
+      "Flights in last 12 months: 0 short, 0 medium, 0 long",
+      "Public transport: 20 minutes per day",
+      "Annual lifestyle spending: furniture 0, sports/cultural events 300, beauty/hairdresser/spa 100",
+      "Appliances bought in past 12 months: 0 large, 0 medium, 0 small",
+      "Past 6 months clothing: 2 new clothes, 1 second-hand clothes, 0 new shoes",
+      "Diet: vegetarian",
+    ],
+  }),
+  bruni: makeUnfcccCalculatorEvidence({
+    member: "Bruni (Liu Xiangyi)",
+    totalTonnes: "4.65",
+    totalKg: "4646.02",
+    resultImage: "/images/act-now/un-calculator/member-results/bruni-unfccc-result.png",
+    sectors: [
+      { label: "Transport", value: "2.26t" },
+      { label: "Home", value: "1.00t" },
+      { label: "Shopping", value: "0.65t" },
+      { label: "Food", value: "0.74t" },
+    ],
+    assumptions: [
+      "Country of residence: China",
+      "Household renewable electricity: I do not know",
+      "Primary heating: district heating; cooking gas: yes",
+      "Car ownership: no",
+      "Flights in last 12 months: 2 short, 1 medium, 0 long",
+      "Public transport: 45 minutes per day",
+      "Annual lifestyle spending: furniture 0, sports/cultural events 800, beauty/hairdresser/spa 300",
+      "Appliances bought in past 12 months: 0 large, 0 medium, 0 small",
+      "Past 6 months clothing: 4 new clothes, 0 second-hand clothes, 1 new pair of shoes",
+      "Diet: I do not eat red meat",
+    ],
+  }),
+  elvira: makeUnfcccCalculatorEvidence({
+    member: "Elvira (Zheng Xinyao)",
+    totalTonnes: "2.09",
+    totalKg: "2085.29",
+    resultImage: "/images/act-now/un-calculator/member-results/elvira-unfccc-result.png",
+    sectors: [
+      { label: "Transport", value: "0.21t" },
+      { label: "Home", value: "1.00t" },
+      { label: "Shopping", value: "0.13t" },
+      { label: "Food", value: "0.74t" },
+    ],
+    assumptions: [
+      "Country of residence: China",
+      "Household renewable electricity: I do not know",
+      "Primary heating: district heating; cooking gas: yes",
+      "Car ownership: no",
+      "Flights in last 12 months: 0 short, 0 medium, 0 long",
+      "Public transport: 30 minutes per day",
+      "Annual lifestyle spending: furniture 0, sports/cultural events 150, beauty/hairdresser/spa 80",
+      "Appliances bought in past 12 months: 0 large, 0 medium, 0 small",
+      "Past 6 months clothing: 1 new clothes, 3 second-hand clothes, 1 second-hand pair of shoes",
+      "Diet: I do not eat red meat",
+    ],
+  }),
+};
+
+const actionReferenceBank = {
+  unActNow:
+    "United Nations. (n.d.). Actions for a healthy planet. https://www.un.org/en/actnow/ten-actions",
+  ipcc2023:
+    "Intergovernmental Panel on Climate Change. (2023). Climate Change 2023: Synthesis report. https://www.ipcc.ch/report/ar6/syr/",
+  pooreNemecek:
+    "Poore, J., & Nemecek, T. (2018). Reducing food's environmental impacts through producers and consumers. Science, 360(6392), 987-992. https://doi.org/10.1126/science.aaq0216",
+  unepWaste:
+    "United Nations Environment Programme. (2024). Global Waste Management Outlook 2024: Beyond an age of waste. https://www.unep.org/resources/global-waste-management-outlook-2024",
+  undpCircular:
+    "United Nations Development Programme. (n.d.). Circular economy. https://www.undp.org/chemicals-waste/our-work/circular-economy",
+  unfcccCalculator:
+    "UN Climate Change & Doconomy. (n.d.). Lifestyle Calculator by Doconomy and the UNFCCC Secretariat. https://lifestylecalculator.com/unfccc",
+  unfcccMethod:
+    "UN Climate Change & Doconomy. (2026). Method Lifestyle Calculator. https://lifestylecalculator.com/files/MethodLifestyleCalculator.pdf",
+};
+
 export const actNowContent = {
   title: "SDG Act Now",
   subtitle:
@@ -12,16 +178,17 @@ export const actNowContent = {
       image: "/images/sdg13/image7.jpg",
       imageCaption: "Source: ECO Reside - Environmental Benefits Of Public Transportation",
       explanation:
-        "The world's roadways are clogged with vehicles, most of them burning diesel or gasoline. Walking or riding a bike instead of driving will reduce greenhouse gas emissions - and help your health and fitness. For longer distances, consider taking a train or bus. And carpool whenever possible. Living car-free can reduce your carbon footprint by up to 2 tons of CO2e per year compared to a lifestyle using a car (Nations, n.d.).",
+        "The UN Act Now action is Walk, bike, or take public transport. Its purpose is to reduce emissions from routine mobility by replacing private-car trips with walking, cycling, buses, subways, and trains whenever these options are practical. The United Nations notes that living car-free can reduce a person's footprint by up to 2 tons of CO2e per year compared with a car-based lifestyle (United Nations, n.d.). For Janet, this action is realistic because many student trips are short, repeated, and located near existing public-transport routes.",
       mechanism:
-        "The core mechanism by which adopting walking, biking, or taking public transport reduces emissions is that these low-carbon or zero-carbon travel modes replace individual travel powered by fossil fuels, primarily gasoline or diesel vehicles. Walking and biking produce no direct emissions at all, while public transport can significantly cut per capita carbon emissions due to its higher passenger capacity per unit of energy consumed. The carbon footprint of bikes mainly comes from manufacturing and maintenance, averaging about 5 grams of CO2 per kilometer. In contrast, a diesel bus emits around 101 grams of CO2 per passenger per kilometer (FasterCapital, 2025).",
+        "The mechanism is mode shift: walking and cycling avoid tailpipe emissions for short trips, while buses, subways, and trains spread energy use across many passengers. Demand-side changes such as avoiding unnecessary car travel and shifting to lower-carbon mobility are recognised climate mitigation measures because they reduce fossil-fuel combustion as well as congestion-related energy waste (Intergovernmental Panel on Climate Change, 2023). The action also changes habit formation: once a route becomes familiar by bike, subway, or rail, the lower-carbon option becomes easier to repeat.",
       example:
-        "For daily commutes to work or school, prioritize public transport options such as subway and bus instead of private car. For short-distance trips, such as grocery shopping at the supermarket near your residence, attending a gathering with friends in the neighborhood, or studying at a nearby library, choose walking or biking directly. This approach not only allows you to flexibly avoid congested road sections, but also reduces carbon emissions.",
+        "Janet can apply the action through a weekly mobility rule: bike or walk for nearby errands, use the underground for routine city trips, and choose rail for longer regional journeys when the route is available. The action is time-bound because the evidence records show three completed low-carbon trips between 2026.06.01 and 2026.06.03. The expected impact is a smaller transport footprint, lower travel cost, more physical activity, and a clearer personal link between SDG 13 and everyday choices.",
       calculator: {
         description:
-          "Using the United Nations online platform for voluntary cancellation of certified emission reductions (CERs), the annual carbon emission of a representative household was calculated and analyzed.",
-        calculatorImage: "/images/sdg13/image9.png",
-        screenshots: Array.from({ length: 10 }, (_, i) => `/images/sdg13/image${i + 8}.png`),
+          "Janet's UN Climate Change and Doconomy Lifestyle Calculator result is used as individual visual evidence. The action-specific comparison below then models how shifting daily mobility from private-car use toward walking, cycling, and public transport reduces per-capita emissions.",
+        sourceLabel: "Lifestyle Calculator by Doconomy and the UNFCCC Secretariat",
+        unfcccEvidence: unfcccCalculatorEvidenceByMember.janet,
+        screenshots: makeUnfcccScreenshots("janet", unfcccCalculatorEvidenceByMember.janet.resultImage),
         before: {
           total: "22.96",
           perCapita: "5.74",
@@ -57,26 +224,35 @@ export const actNowContent = {
           desc: "As private car usage decreases, fuel consumption also declines accordingly. This can reduce the country's dependence on petroleum imports, mitigate the geopolitical risks associated with energy supply, while creating greater space for energy structure transition.",
         },
       ],
+      reductionPathway:
+        "Janet's three records are treated as behavioural carbon-reduction solutions rather than paid carbon-credit offsets. Together they show avoidance of private-car travel for short trips, substitution with underground travel for routine city movement, and rail use for longer journeys. This creates a practical pathway from a high-emission mobility habit toward repeated lower-carbon transport choices.",
       offsetSolutions: [
         {
-          title: "Shift weekly commute kilometres to transit and retire verified credits",
-          desc: "For unavoidable trips that still create emissions, I would record the remaining transport footprint each month and purchase verified carbon credits through a credible platform, prioritising public-transport or renewable-energy projects that avoid equivalent CO2e elsewhere.",
-          evidence: "Required evidence: a dated public-transport ticket, transit card photo, walking route, or cycling record.",
-          evidenceImage: "/images/team/janet-transport-evidence.jpg",
+          title: "Bike for short-distance trips",
+          desc: "The file name bike points to a direct low-carbon mobility choice. For nearby errands, campus travel, or short journeys between daily destinations, using a bike can replace taxi or private-car use while keeping the action simple and repeatable.",
+          evidence: "Evidence photo taken by Janet on 2026.06.01, showing a short-distance bike trip completed without using a private car.",
+          evidenceImage: "/images/act-now/evidence/bike.jpg",
+          credibility:
+            "This is credible because it documents a completed short-distance mobility choice, not a stock image. The photo matches the selected UN action and shows a behaviour that can be repeated for campus errands and nearby study trips.",
         },
         {
-          title: "Fund urban tree planting near transport corridors",
-          desc: "A practical offset is to support verified urban greening or reforestation programmes. This compensates for remaining commute emissions while improving shade, urban heat resilience, and local air quality around roads.",
-          evidence: "Required evidence: a dated photo or receipt showing support for a greening or verified offset activity.",
-          evidenceImage: "/images/team/janet-greening-evidence.jpg",
+          title: "Underground instead of private-car travel",
+          desc: "The file name underground suggests an urban public-transport choice. Taking the subway or underground for routine city trips can reduce reliance on private cars, especially for routes where metro travel is already convenient and predictable.",
+          evidence: "Evidence photo taken by Janet on 2026.06.02, showing an underground or public-transport trip used instead of private-car travel.",
+          evidenceImage: "/images/act-now/evidence/underground.jpg",
+          credibility:
+            "The image is tied to an actual public-transport route, so the evidence is directly connected to the claimed action. It supports the offset comparison because replacing private-car kilometres with metro travel is one of the clearest transport substitutions in a city.",
         },
         {
-          title: "Support renewable electricity for stations and homes",
-          desc: "Transport choices are cleaner when electricity and shared infrastructure use lower-carbon power. I would offset residual emissions by supporting renewable-energy certificates or local clean-energy programmes connected to daily travel and household charging needs.",
-          evidence: "Required evidence: a dated app screen, project receipt, or record of a verified renewable-energy offset.",
-          evidenceImage: "/images/team/janet-renewable-evidence.jpg",
+          title: "Railway for longer public-transport trips",
+          desc: "The railway photo extends Janet's action from daily commuting to longer-distance public transport. When a train or high-speed rail route is practical, choosing rail can reduce reliance on private cars or short flights while keeping the journey efficient.",
+          evidence: "Evidence photo taken by Janet on 2026.06.03, showing a railway travel record used as a lower-carbon transport choice.",
+          evidenceImage: "/images/act-now/evidence/railway.jpg",
+          credibility:
+            "This record broadens the action beyond one local trip. It shows that the same low-carbon logic can apply to longer journeys, which makes the plan more personal and realistic than a single one-off photograph.",
         },
       ],
+      references: [actionReferenceBank.unActNow, actionReferenceBank.ipcc2023],
     },
     {
       member: "Irene (Han Yutong)",
@@ -85,15 +261,17 @@ export const actNowContent = {
       image: "/images/act-now/eat-more-vegetables.jpg",
       imageCaption: "Photo: Jana Ohajdova on Unsplash - green vegetables and plant-based food",
       explanation:
-        "Choosing more vegetables and plant-based meals is a practical Act Now response because food choices shape both personal health and climate pressure. The United Nations encourages people to eat more vegetables, fruits, whole grains, legumes, nuts, and seeds because plant-rich diets generally require fewer resources and generate lower greenhouse gas emissions than meat-heavy diets (United Nations, n.d.). For a student household, the goal is not to demand a perfect vegan lifestyle, but to replace several high-emission meals each week with balanced vegetable-based meals. This action connects SDG 2's concern for sustainable food systems with SDG 13's focus on climate action.",
+        "The UN Act Now action is Eat more vegetables. Its purpose is to reduce food-related emissions while improving daily nutrition through more vegetables, fruits, whole grains, legumes, nuts, and seeds (United Nations, n.d.). For a student household, the goal is not to demand a perfect vegan lifestyle, but to replace several high-emission meals each week with balanced plant-forward meals. This action connects SDG 2's concern for sustainable food systems with SDG 13's focus on climate action.",
       mechanism:
-        "Diet changes lower emissions by reducing demand for foods with high land, feed, energy, methane, and supply-chain footprints. Plant foods usually need less land and produce fewer greenhouse gases per unit of nutrition than beef and other ruminant meat. A practical mechanism is substitution: replace meat-heavy meals with vegetables, legumes, tofu, eggs, whole grains, and seasonal local produce. This reduces indirect emissions from production, refrigeration, and transport while also encouraging more efficient use of farmland. Poore and Nemecek (2018) show that food's environmental impacts vary greatly across products, which means consumer choices can meaningfully reduce the footprint of daily meals.",
+        "Diet changes lower emissions by reducing demand for foods with high land, feed, energy, methane, and supply-chain footprints. A practical mechanism is substitution: replace meat-heavy meals with vegetables, legumes, tofu, eggs, whole grains, and seasonal local produce. Poore and Nemecek (2018) show that food's environmental impacts vary greatly across products, which means consumer choices can meaningfully reduce the footprint of daily meals. For Irene, the most credible approach is small but repeated substitution rather than a dramatic claim that would be hard to sustain.",
       example:
-        "In daily life, I can begin with three concrete habits: choose a vegetable-based lunch at least three times per week, use tofu or beans as the main protein in home cooking, and order smaller meat portions when eating out. I can also plan meals before shopping so vegetables are used before they spoil. A realistic campus version would be to record one week of meals, identify the highest-emission meat meals, and replace them with affordable vegetable dishes. This makes the action visible, measurable, and easier to continue.",
+        "Irene can begin with three concrete habits: choose a vegetable-based lunch at least three times per week, use tofu or beans as the main protein in simple dormitory meals, and plan snacks or meals before buying food. The evidence records from 2026.06.03 to 2026.06.05 show a vegetable meal, a plant-based snack, and a short meal plan. This makes the action visible, measurable, and easier to continue without requiring expensive ingredients.",
       calculator: {
         description:
-          "The representative household estimate compares a meat-heavy baseline with a more plant-forward diet. The change is modelled as a reduction in the diet component of annual per-capita emissions while keeping other lifestyle categories stable.",
-        screenshots: [],
+          "Irene's UN Climate Change and Doconomy Lifestyle Calculator result is used as individual visual evidence. The representative estimate compares a meat-heavy baseline with a more plant-forward diet while keeping other lifestyle categories stable.",
+        sourceLabel: "Lifestyle Calculator by Doconomy and the UNFCCC Secretariat",
+        unfcccEvidence: unfcccCalculatorEvidenceByMember.irene,
+        screenshots: makeUnfcccScreenshots("irene", unfcccCalculatorEvidenceByMember.irene.resultImage),
         before: {
           total: "41.12",
           perCapita: "8.22",
@@ -129,26 +307,35 @@ export const actNowContent = {
           desc: "Visible food choices can encourage friends and classmates to try lower-carbon meals without turning sustainability into a slogan.",
         },
       ],
+      reductionPathway:
+        "Irene's three records are treated as food-related carbon-reduction solutions. The strategy is not to claim that one snack or one meal offsets an entire footprint, but to show a repeatable pathway: add more vegetables, replace some highly processed snacks with plant-based options, and plan meals before purchasing food. This makes the action measurable, affordable, and realistic in a dormitory setting.",
       offsetSolutions: [
         {
-          title: "Record one week of plant-forward meals",
-          desc: "I would keep a dated meal log showing which meat-heavy meals were replaced by vegetable-based options, then compare the estimated diet footprint before and after the change.",
-          evidence: "Required evidence: a dated vegetable-based meal photo or one-week plant-forward meal log.",
-          evidenceImage: "/images/team/irene-vegetables-evidence.jpg",
+          title: "Eat vegetables",
+          desc: "The file name eat vegetables gives the action very directly: choose a vegetable-based meal and make vegetables a visible part of daily diet choices. For a student, this can begin with replacing some meat-heavy lunches with affordable vegetable dishes.",
+          evidence: "Evidence photo taken by Irene on 2026.06.03, showing a vegetable-based meal used as part of a plant-forward daily diet.",
+          evidenceImage: "/images/act-now/evidence/eat-vegetables.jpg",
+          credibility:
+            "The photo directly matches the selected action because it shows a completed vegetable-based meal. It is credible as a behavioural record because it documents a real food choice Irene can repeat on campus.",
         },
         {
-          title: "Support local seasonal produce",
-          desc: "Choosing seasonal vegetables from local markets can reduce unnecessary packaging and transport pressure while supporting local food systems.",
-          evidence: "Required evidence: a dated market, dining-hall, or kitchen photo showing seasonal vegetables.",
-          evidenceImage: "/images/team/irene-seasonal-produce-evidence.jpg",
+          title: "Choose plant-based dormitory snacks",
+          desc: "The dates photo supports the same Act Now direction without pretending to be a full vegetable meal. In a dormitory setting, choosing fruit or other plant-based snacks can replace highly processed snacks and make plant-forward eating easier to practise between meals.",
+          evidence: "Evidence photo taken by Irene on 2026.06.04, showing dried dates as a plant-based dormitory snack chosen instead of highly processed snacks.",
+          evidenceImage: "/images/act-now/evidence/irene-dates-snack.jpg",
+          credibility:
+            "This evidence is intentionally framed as a plant-based snack rather than as a full vegetable meal. That makes the claim more credible: it supports the wider plant-forward action while staying honest about what the photo actually shows.",
         },
         {
-          title: "Share a low-carbon meal plan",
-          desc: "I would prepare a simple three-day student meal plan and share it with classmates, making the action replicable rather than only personal.",
-          evidence: "Required evidence: a dated meal-plan screenshot, class sharing record, or photo of the prepared plan.",
-          evidenceImage: "/images/team/irene-meal-plan-evidence.jpg",
+          title: "Plan three plant-forward meals",
+          desc: "The meal-plan photo turns the action into a time-bound routine rather than a single food choice. Writing meals in advance helps Irene include vegetables, eggs, rice, yoghurt, salad, and fruit across several days while reducing impulsive meat-heavy or highly processed options.",
+          evidence: "Evidence photo taken by Irene on 2026.06.05, showing a handwritten three-day plant-forward meal plan prepared in the dormitory.",
+          evidenceImage: "/images/act-now/evidence/irene-meal-plan-web.jpg",
+          credibility:
+            "The meal plan strengthens the action because it shows implementation before consumption. A dated plan is useful evidence for this rubric because it connects intention, timing, and repeated meal choices.",
         },
       ],
+      references: [actionReferenceBank.unActNow, actionReferenceBank.pooreNemecek, actionReferenceBank.ipcc2023],
     },
     {
       member: "Bruni (Liu Xiangyi)",
@@ -157,15 +344,17 @@ export const actNowContent = {
       image: "/images/act-now/consider-your-travel.jpg",
       imageCaption: "Photo: Hanna Lazar on Unsplash - railway travel and luggage",
       explanation:
-        "Considering travel means planning trips more carefully before choosing the highest-emission option. The United Nations Act Now guidance encourages people to fly less, use virtual meetings when possible, travel by train for shorter distances, and choose local destinations when they can (United Nations, n.d.). This topic is different from daily public transport because it focuses on occasional higher-impact decisions: flights, long-distance trips, vacations, conferences, and unnecessary repeated travel. For students, a realistic response is to combine trips, avoid unnecessary flights, choose rail for domestic travel when possible, and use online participation when physical attendance is not essential.",
+        "The UN Act Now action is Consider your travel. Its purpose is to make occasional travel decisions more deliberate before choosing the highest-emission option. The United Nations encourages people to fly less, use virtual meetings when possible, travel by train for shorter distances, and choose nearby destinations when they can (United Nations, n.d.). For Bruni, the action is not to deny that some research or study travel is necessary, but to reduce avoidable journeys and select lower-carbon options when the purpose of the trip allows it.",
       mechanism:
-        "Travel planning lowers emissions by reducing high-carbon passenger kilometres and replacing them with lower-carbon alternatives. Flights are especially important because a single round trip can create a large share of an individual's annual footprint. The mechanism is therefore avoidance, substitution, and efficiency: avoid trips that can be replaced by online communication, substitute rail or coach for short-distance flights, and combine multiple purposes into one trip. These decisions reduce direct fuel combustion and also reduce indirect demand for airport, road, and tourism infrastructure.",
+        "Travel planning lowers emissions through avoidance, substitution, and efficiency. Avoidance means using online participation when physical presence is unnecessary; substitution means choosing rail or public transport for suitable routes; efficiency means combining several tasks into one journey. The IPCC identifies demand-side measures, including changes in transport behaviour, as part of climate mitigation because they reduce energy demand and fossil-fuel combustion (Intergovernmental Panel on Climate Change, 2023). For a research student, the most defensible version of this action is to document the travel decision itself: why the trip was needed, whether an online option existed, and what lower-carbon choice was selected.",
       example:
-        "My personal implementation can start with a travel checklist before each long-distance trip: Is this trip necessary? Can the meeting be online? Is high-speed rail available? Can I combine several tasks into one journey? For family visits or short holidays, I can choose rail instead of flights where time and cost are reasonable. For university activities, I can suggest online participation for meetings that do not require fieldwork. The expected impact is fewer unnecessary trips, lower flight-related emissions, and more deliberate travel spending.",
+        "Bruni's implementation can start with a travel checklist before each long-distance trip: Is this trip necessary? Can the meeting be online? Is high-speed rail available? Can several tasks be combined into one journey? The evidence includes an online research meeting record, a necessary flight record with a small green-flying choice, and a high-speed rail ticket record. Together they show that the action is not a slogan; it is a decision process applied across different travel situations.",
       calculator: {
         description:
-          "The representative household estimate compares a baseline with frequent long-distance travel against a lower-travel scenario that reduces flights and combines trips where possible.",
-        screenshots: [],
+          "Bruni's UN Climate Change and Doconomy Lifestyle Calculator result is used as individual visual evidence. The representative estimate compares frequent long-distance travel with a lower-travel scenario that reduces avoidable flights and combines trips where possible.",
+        sourceLabel: "Lifestyle Calculator by Doconomy and the UNFCCC Secretariat",
+        unfcccEvidence: unfcccCalculatorEvidenceByMember.bruni,
+        screenshots: makeUnfcccScreenshots("bruni", unfcccCalculatorEvidenceByMember.bruni.resultImage),
         before: {
           total: "22.96",
           perCapita: "5.74",
@@ -201,26 +390,35 @@ export const actNowContent = {
           desc: "Comparing flight, rail, coach, and online options helps students understand the carbon consequences of everyday decisions.",
         },
       ],
+      reductionPathway:
+        "Bruni's three records are treated as travel-decision carbon-reduction solutions. The pathway is avoidance first, substitution second, and efficiency third: hold online meetings when travel is unnecessary, choose rail for suitable regional routes, and make smaller green-flying choices when a flight cannot be avoided. This framing keeps the claim honest while still showing completed action.",
       offsetSolutions: [
         {
-          title: "Keep a low-carbon travel record",
-          desc: "I would document each avoided flight or rail substitution with dated tickets, route screenshots, or meeting records, then estimate the saved emissions.",
-          evidence: "Required evidence: a dated rail ticket, route screenshot, or low-carbon trip record.",
-          evidenceImage: "/images/team/bruni-travel-evidence.jpg",
+          title: "Hold research meetings online when travel is unnecessary",
+          desc: "The online meeting preparation photo connects Bruni's travel action with research work. When a meeting can be handled remotely, online participation avoids an extra trip while still allowing collaboration, discussion, and academic progress.",
+          evidence: "Evidence photo taken by Bruni on 2025.07.22, showing her UCL research meeting preparation for an online group discussion with an Imperial College student.",
+          evidenceImage: "/images/act-now/evidence/bruni-online-meeting.jpg",
+          credibility:
+            "This is credible because the image is tied to Bruni's actual research context rather than a generic online-meeting screenshot. It supports the action by showing that academic collaboration can sometimes continue without extra travel.",
         },
         {
-          title: "Use online participation when suitable",
-          desc: "For meetings without fieldwork or required attendance, online participation can replace travel while preserving communication and learning outcomes.",
-          evidence: "Required evidence: a dated online-meeting screenshot or remote participation notes.",
-          evidenceImage: "/images/team/bruni-online-meeting-evidence.jpg",
+          title: "Flight without meals as greener flying",
+          desc: "The file name flight without meals makes the green-flying idea specific. When flying is necessary, skipping in-flight meals can reduce unnecessary food waste and packaging, and it shows that greener travel can include small booking choices as well as larger route choices.",
+          evidence: "Evidence photo taken by Bruni on 2026.06.05, showing flight tickets used to document necessary air travel and the choice to avoid in-flight meals.",
+          evidenceImage: "/images/act-now/evidence/flight-without-meals.jpg",
+          credibility:
+            "This card does not claim that skipping a meal offsets a flight. It is credible because it records a small but verifiable choice made during necessary air travel, while the wider plan still prioritises avoiding flights or choosing rail where possible.",
         },
         {
-          title: "Offset unavoidable long-distance trips",
-          desc: "When a trip is necessary, I would calculate the remaining emissions and support verified climate projects or renewable-energy credits with transparent records.",
-          evidence: "Required evidence: a dated offset receipt or verified climate-project record.",
-          evidenceImage: "/images/team/bruni-offset-evidence.jpg",
+          title: "Choose high-speed rail for regional travel",
+          desc: "The rail ticket photo shows a lower-carbon regional travel habit. For routes such as Hangzhou to Shanghai, high-speed rail can be a practical alternative to private-car travel or short-distance flights while still supporting efficient mobility.",
+          evidence: "Evidence photo from Bruni's travel record on 2023.07.30, showing a high-speed rail trip from Hangzhou East to Shanghai Hongqiao as a lower-carbon regional travel choice.",
+          evidenceImage: "/images/act-now/evidence/bruni-rail-ticket-web.jpg",
+          credibility:
+            "The ticket is a real dated travel record. Although it is older than the current project week, it credibly demonstrates Bruni's existing preference for rail on regional routes and supports the personal feasibility of the action.",
         },
       ],
+      references: [actionReferenceBank.unActNow, actionReferenceBank.ipcc2023],
     },
     {
       member: "Elvira (Zheng Xinyao)",
@@ -229,15 +427,17 @@ export const actNowContent = {
       image: "/images/sdg4/image9.png",
       imageCaption: "Source: Visual China Group - Carbon footprint distribution",
       explanation:
-        "Electronics, clothes, plastics and other items we buy cause carbon emissions at each point in production, from the extraction of raw materials to manufacturing and transporting goods to market. To protect the climate, buy fewer things, shop second-hand, and repair what you can. Plastics alone generated 1.8 billion metric tons of greenhouse gas emissions in 2019 - 3.4 per cent of the global total. Less than 10 per cent is recycled, and once plastic is discarded, it can linger for hundreds of years. Every kilogram of textiles produced generates about 17 kilograms of CO2e (United Nations, n.d.).",
+        "The UN Act Now action is Reduce, reuse, repair, recycle. Its purpose is to lower the emissions embedded in products by buying fewer new items, extending the life of existing items, and sending materials back into useful circulation (United Nations, n.d.). For a student, this action can be practised through paper saving, second-hand books, repaired stationery, reusable bottles, and careful waste sorting. It also connects naturally with SDG 4 because education materials can become part of a lower-waste learning routine.",
       mechanism:
-        "The 4R action reduces greenhouse gas emissions by targeting every stage in the lifecycle of products. Every product generates emissions throughout its lifecycle, involving raw material extraction, manufacturing, transporting, and disposal. By diminishing unnecessary consumption, we cut down production, avoiding carbon emissions. Reusing items lengthens their lifespan, eliminating the need for new production. Repairing extends product life further. Recycling diverts materials back into production cycles, which uses far less energy than producing from virgin materials (Scells et al., 2022). Together, these actions break the conventional product lifecycle, realising measurable reductions in emissions.",
+        "The 4R action reduces emissions by targeting the product lifecycle. Reducing demand avoids some extraction, manufacturing, packaging, transport, and disposal emissions; reusing and repairing extend product life; recycling keeps materials in circulation instead of sending them directly to landfill or incineration. UNEP (2024) frames waste reduction and circular management as central to moving beyond a linear take-make-waste model, while UNDP links circular economy approaches with long-term environmental and social well-being (United Nations Environment Programme, 2024; United Nations Development Programme, n.d.).",
       example:
-        "In daily life, the 4R approach works as follows: bring a reusable water bottle to reduce disposable items; use second-hand textbooks and stationery whenever possible; mend torn clothes and repair broken books instead of buying replacements; categorise paper, plastic, and metal waste for proper recycling. This lifestyle not only contributes to a more affordable and sustainable way of living, but also plays an essential role in reducing carbon emissions.",
+        "Elvira can apply the action inside ordinary study routines: print course materials double-sided, reuse notes and second-hand books, repair stationery before buying replacements, and sort recyclable paper or plastic after class. The evidence records from 2026.06.06 to 2026.06.08 make the plan time-bound and personal. The expected impact is lower consumption-related emissions, lower study cost, and a clearer link between sustainable learning materials and responsible consumption.",
       calculator: {
         description:
-          "Using the United Nations online platform for voluntary cancellation of certified emission reductions (CERs), the annual carbon footprint of a representative household was calculated. Food and transportation account for 43% and 34% of emissions respectively - the two largest contributors.",
-        screenshots: Array.from({ length: 15 }, (_, i) => `/images/sdg4/image${i + 10}.png`),
+          "Elvira's UN Climate Change and Doconomy Lifestyle Calculator result is used as individual visual evidence. The action-specific comparison below then models how buying less, reusing more, repairing items, and recycling materials can reduce a consumption footprint.",
+        sourceLabel: "Lifestyle Calculator by Doconomy and the UNFCCC Secretariat",
+        unfcccEvidence: unfcccCalculatorEvidenceByMember.elvira,
+        screenshots: makeUnfcccScreenshots("elvira", unfcccCalculatorEvidenceByMember.elvira.resultImage),
         before: {
           total: "41.12",
           perCapita: "8.22",
@@ -273,43 +473,47 @@ export const actNowContent = {
           desc: "Practising these habits helps foster sustainable awareness towards consumption, which aligns with SDG 4 and encourages others to adopt a low-carbon lifestyle.",
         },
       ],
+      reductionPathway:
+        "Elvira's three records are treated as consumption-related carbon-reduction solutions. They cover the 4R sequence in a student context: reduce paper demand through double-sided printing, repair stationery before replacement, and reuse second-hand books or notes. These actions reduce the need for newly produced goods and make sustainable learning materials visible in daily study.",
       offsetSolutions: [
         {
-          title: "Finance certified recycling and material recovery",
-          desc: "After reducing purchases, I would offset unavoidable product emissions by supporting certified recycling, textile recovery, or e-waste collection projects that prevent new raw-material extraction and save equivalent emissions.",
-          evidence: "Required evidence: a dated photo of sorted recyclables, e-waste delivery, or material recovery.",
-          evidenceImage: "/images/team/elvira-recycle-evidence.jpg",
+          title: "Double-sided printing and paper saving",
+          desc: "The file name double-sided printing and paper saving directly supports the reduce part of 4R. Printing on both sides, keeping useful handouts, and avoiding duplicate copies reduce paper demand in daily academic work.",
+          evidence: "Evidence photo taken by Elvira on 2026.06.06, showing double-sided printed study materials and paper-saving course notes.",
+          evidenceImage: "/images/act-now/evidence/double-sided-printing-paper-saving.png",
+          credibility:
+            "The photo is credible because it shows an everyday study material choice directly related to the reduce principle. It is also easy to repeat across courses, which makes the action more than a one-time display.",
         },
         {
-          title: "Donate to repair and reuse programmes",
-          desc: "Repair cafes, second-hand libraries, and community reuse projects reduce demand for new production. Funding or volunteering in these projects can compensate for the remaining emissions attached to products I still need to buy.",
-          evidence: "Required evidence: a dated photo of a repaired item, repair process, or second-hand reuse record.",
-          evidenceImage: "/images/team/elvira-repair-evidence.jpg",
+          title: "Repairing stationery",
+          desc: "The file name repairing stationery directly supports the repair part of 4R. Fixing pens, folders, notebooks, or small study tools extends their useful life and avoids unnecessary replacement purchases.",
+          evidence: "Evidence photo taken by Elvira on 2026.06.07, showing stationery being repaired before buying a replacement.",
+          evidenceImage: "/images/act-now/evidence/repairing-stationery.png",
+          credibility:
+            "This record is credible because it captures the repair step itself, not only the final item. It supports the lifecycle logic of 4R by showing how a small object can remain useful for longer.",
         },
         {
-          title: "Buy verified circular products for unavoidable purchases",
-          desc: "When purchasing is unavoidable, I would choose products with credible recycled content, durability, and repairability claims. This shifts spending toward lower-carbon supply chains and offsets part of the impact of consumption.",
-          evidence: "Required evidence: a dated photo or receipt showing a repaired, second-hand, or circular product.",
-          evidenceImage: "/images/team/elvira-circular-product-evidence.jpg",
+          title: "Using second-hand books",
+          desc: "The file name using second-hand books directly supports reuse in a student context. Second-hand textbooks, borrowed books, and annotated notes extend the life of learning materials and reduce the need for newly printed copies.",
+          evidence: "Evidence photo taken by Elvira on 2026.06.08, showing second-hand books and reused notes with visible study use.",
+          evidenceImage: "/images/act-now/evidence/using-second-hand-books.png",
+          credibility:
+            "The evidence fits Elvira's student context because books and notes are recurring academic materials. Reusing them is a credible completed action because it reduces new-material demand while still supporting learning.",
         },
       ],
+      references: [actionReferenceBank.unActNow, actionReferenceBank.unepWaste, actionReferenceBank.undpCircular],
     },
   ],
   references: [
     "Britannica Editors. (2026, May 5). Carbon dioxide. Retrieved from Britannica: https://www.britannica.com/science/carbon-dioxide",
-    "Climate Change Tracker. (2024). China's Progress and Recent Impact. https://climatechangetracker.org/nations/greenhouse-gas-emissions/china/progress-and-recent-impact",
-    "FasterCapital. (2025, April 9). Bike Environmental Impact: Biking vs. Public Transportation: Which Is Better for the Planet. https://fastercapital.com/content/Bike-Environmental-Impact--Biking-vs--Public-Transportation--Which-Is-Better-for-the-Planet.html",
-    "Hilton, I. (2026, March 26). As It Boosts Renewables, China Still Can't Break Its Coal Addiction. Yale School of the Environment: https://e360.yale.edu/features/china-coal-five-year-plan",
-    "Hodges, M. (2025, October 13). Eco-Friendly Commutes: Walking And Biking's Impact On Our Planet. SHUN WASTE: https://shunwaste.com/article/how-does-walking-or-riding-a-bike-affect-the-environment",
-    "Nations, United. (n.d.). Actions for a healthy planet. United Nations: https://www.un.org/en/actnow/ten-actions",
-    "Scells, H., Zhuang, S., & Zuccon, G. (2022). Reduce, Reuse, Recycle: Green Information Retrieval Research. Proceedings of the 45th ACM SIGIR Conference. https://doi.org/10.1145/3477495.3531738",
-    "TheGlobalEconomy. (2023). China: Coal Reserves. https://www.theglobaleconomy.com/China/coal_reserves/",
-    "United Nation. (2015, September 25). Department of Economic and Social Affairs. Sustainable Development: https://sdgs.un.org/goals/goal13#targets_and_indicators",
-    "United Nations. (n.d.). Actions for a healthy planet. Retrieved from: https://un.org/en/actnow/ten-actions",
-    "United Nations Development Programme. (n.d.). A circular economy aligns environmental protection with long-term economic and social well-being. Retrieved from: https://www.undp.org/chemicals-waste/our-work/circular-economy",
+    actionReferenceBank.unActNow,
+    actionReferenceBank.ipcc2023,
+    actionReferenceBank.pooreNemecek,
+    actionReferenceBank.unepWaste,
+    actionReferenceBank.undpCircular,
+    actionReferenceBank.unfcccCalculator,
+    actionReferenceBank.unfcccMethod,
     "Jana Ohajdova. (n.d.). Green vegetables in a bowl [Photograph]. Unsplash. https://unsplash.com/photos/9nzQserYaN8",
     "Hanna Lazar. (n.d.). People at a railway station with luggage [Photograph]. Unsplash. https://unsplash.com/photos/SO5JaABqo2w",
-    "Poore, J., & Nemecek, T. (2018). Reducing food's environmental impacts through producers and consumers. Science, 360(6392), 987-992. https://doi.org/10.1126/science.aaq0216",
-    "Wang, J., Huang, J., Rozelle, S. (2010, May 1). Climate Change and China's Agricultural Sector: Impacts, Adaptation, and Mitigation. Stanford University: https://aparc.fsi.stanford.edu/publications/climate_change_and_chinas_agricultural_sector_impacts_adaptation_and_mitigation",
   ],
 };

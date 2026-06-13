@@ -4,14 +4,15 @@ import remarkGfm from "remark-gfm";
 import { motion, useReducedMotion } from "framer-motion";
 import { MessageSquare, Send, Sparkles } from "lucide-react";
 import { streamDeepSeekReply } from "../../lib/deepseek";
+import { useWorkspace } from "../context/WorkspaceContext";
 
 const motionEase = [0.23, 1, 0.32, 1];
 
 const examplePrompts = [
-  "What is SDG 13?",
-  "How can education reduce inequality?",
-  "What datasets can I use for climate research?",
-  "How can students take SDG action?",
+  "Audit the active case for unsupported claims.",
+  "Which evidence should I collect next?",
+  "Rewrite the response pathway for an NGO audience.",
+  "Check whether the brief is citation-ready.",
 ];
 
 function MarkdownMessage({ content }) {
@@ -102,6 +103,7 @@ function MessageBubble({ message, shouldReduceMotion }) {
 }
 
 export default function WorkspaceChat() {
+  const { state } = useWorkspace();
   const shouldReduceMotion = useReducedMotion();
   const abortRef = useRef(null);
   const scrollRef = useRef(null);
@@ -119,13 +121,34 @@ export default function WorkspaceChat() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const hasMessages = messages.length > 0;
+  const activeCase =
+    state.cases.find((item) => item.id === state.selectedCaseId) || state.cases[0];
+  const activeEvidence = useMemo(
+    () => state.evidence.filter((item) => item.caseId === activeCase?.id),
+    [state.evidence, activeCase?.id],
+  );
+  const activeClaims = useMemo(
+    () => state.claims.filter((item) => item.caseId === activeCase?.id),
+    [state.claims, activeCase?.id],
+  );
+  const activeBrief =
+    state.briefs.find((item) => item.caseId === activeCase?.id) || state.briefs[0];
+  const researchContext = useMemo(
+    () => ({
+      case: activeCase,
+      evidence: activeEvidence,
+      claims: activeClaims,
+      brief: activeBrief,
+    }),
+    [activeCase, activeEvidence, activeClaims, activeBrief],
+  );
 
   const welcomeMessages = useMemo(
     () => [
       {
         role: "assistant",
         content:
-          "Welcome. I can help you explore SDG research questions, literature analysis, and sustainability topics. How can I assist your research today?",
+          "Welcome. I can review the active SDG case, test claims against evidence, flag citation gaps, and suggest the next research move.",
       },
     ],
     [],
@@ -151,6 +174,7 @@ export default function WorkspaceChat() {
     try {
       await streamDeepSeekReply(nextMessages, {
         signal: abort.signal,
+        context: researchContext,
         onToken: (token) => {
           setMessages((prev) =>
             prev.map((m, i) =>
@@ -198,7 +222,7 @@ export default function WorkspaceChat() {
             </div>
             <h2 className="text-xl font-bold text-white">Research Assistant</h2>
             <p className="max-w-md text-sm text-white/52">
-              Ask about SDG research topics, get literature suggestions, or explore sustainability questions.
+              Reviewing {activeCase ? `${activeCase.sdg} / ${activeCase.country}` : "your active case"} with linked claims, evidence, and brief context.
             </p>
             <div className="mt-2 grid gap-2 sm:grid-cols-2">
               {examplePrompts.map((prompt) => (
@@ -274,7 +298,7 @@ export default function WorkspaceChat() {
           </div>
         </form>
         <p className="mt-2 text-center text-[10px] text-white/32">
-          Educational prototype — not official UN guidance.
+          Case-aware research reviewer. Verify final claims against your original sources.
         </p>
       </div>
     </div>

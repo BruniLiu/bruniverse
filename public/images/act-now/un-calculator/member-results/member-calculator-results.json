@@ -1,0 +1,190 @@
+[
+  {
+    "slug": "janet",
+    "member": "Janet (Hou Yuheng)",
+    "action": "Walk, bike, or take public transport",
+    "token": "61bf733b-475f-4697-9b0f-7d822db25a33",
+    "generatedAt": "2026-06-13",
+    "totalKg": 2694.6,
+    "totalTonnes": "2.69",
+    "resultImage": "/images/act-now/un-calculator/member-results/janet-unfccc-result.png",
+    "sectors": [
+      {
+        "label": "Food",
+        "value": "0.74t",
+        "kg": 736.66
+      },
+      {
+        "label": "Home",
+        "value": "1.00t",
+        "kg": 1003.63
+      },
+      {
+        "label": "Shopping",
+        "value": "0.38t",
+        "kg": 380.56
+      },
+      {
+        "label": "Transport",
+        "value": "0.57t",
+        "kg": 573.75
+      }
+    ],
+    "assumptions": [
+      "Our lifestyle choices have an impact on the climate. This is usually described as our carb: y",
+      "What is your country of residence?: CN",
+      "Does your household use renewable electricity?: i-dont-know",
+      "What is the primary heating source in your home?: heat-district-heating",
+      "Do you use gas for cooking in your home?: y",
+      "Do you have a car?: n",
+      "How many return flights in these categories have you taken within the past 12 months? (Onl: 0, 0, 0, false",
+      "How many minutes per day do you typically use public transport?: 90",
+      "How much have you spent in the following categories these past 12 months?: 0, 400, 200",
+      "How many items in these categories have you bought for yourself or your home these past 12: 0, 0, 0",
+      "Within the past 6 months, how many items in these categories have you bought? (A shirt wou: 3, 1, 1, 0",
+      "What best describes how you eat?: 736.6589136294",
+      "Your 12 answers cover the major part of your lifestyle and we can now show you a footprint: y"
+    ]
+  },
+  {
+    "slug": "irene",
+    "member": "Irene (Han Yutong)",
+    "action": "Eat more vegetables",
+    "token": "8c1e1bc8-9fbe-4c42-915c-da617e6cb6aa",
+    "generatedAt": "2026-06-13",
+    "totalKg": 2128.64,
+    "totalTonnes": "2.13",
+    "resultImage": "/images/act-now/un-calculator/member-results/irene-unfccc-result.png",
+    "sectors": [
+      {
+        "label": "Food",
+        "value": "0.73t",
+        "kg": 726.56
+      },
+      {
+        "label": "Home",
+        "value": "1.00t",
+        "kg": 1003.63
+      },
+      {
+        "label": "Shopping",
+        "value": "0.25t",
+        "kg": 247.45
+      },
+      {
+        "label": "Transport",
+        "value": "0.15t",
+        "kg": 151
+      }
+    ],
+    "assumptions": [
+      "Our lifestyle choices have an impact on the climate. This is usually described as our carb: y",
+      "What is your country of residence?: CN",
+      "Does your household use renewable electricity?: i-dont-know",
+      "What is the primary heating source in your home?: heat-district-heating",
+      "Do you use gas for cooking in your home?: y",
+      "Do you have a car?: n",
+      "How many return flights in these categories have you taken within the past 12 months? (Onl: 0, 0, 0, false",
+      "How many minutes per day do you typically use public transport?: 20",
+      "How much have you spent in the following categories these past 12 months?: 0, 300, 100",
+      "How many items in these categories have you bought for yourself or your home these past 12: 0, 0, 0",
+      "Within the past 6 months, how many items in these categories have you bought? (A shirt wou: 2, 1, 0, 0",
+      "What best describes how you eat?: 726.5607365199",
+      "Your 12 answers cover the major part of your lifestyle and we can now show you a footprint: y"
+    ]
+  },
+  {
+    "slug": "bruni",
+    "member": "Bruni (Liu Xiangyi)",
+    "action": "Consider your travel",
+    "token": "b5b72f35-6a90-4bbb-9ab8-22017e360509",
+    "generatedAt": "2026-06-13",
+    "totalKg": 4646.02,
+    "totalTonnes": "4.65",
+    "resultImage": "/images/act-now/un-calculator/member-results/bruni-unfccc-result.png",
+    "sectors": [
+      {
+        "label": "Food",
+        "value": "0.74t",
+        "kg": 736.66
+      },
+      {
+        "label": "Home",
+        "value": "1.00t",
+        "kg": 1003.63
+      },
+      {
+        "label": "Shopping",
+        "value": "0.65t",
+        "kg": 646.36
+      },
+      {
+        "label": "Transport",
+        "value": "2.26t",
+        "kg": 2259.37
+      }
+    ],
+    "assumptions": [
+      "Our lifestyle choices have an impact on the climate. This is usually described as our carb: y",
+      "What is your country of residence?: CN",
+      "Does your household use renewable electricity?: i-dont-know",
+      "What is the primary heating source in your home?: heat-district-heating",
+      "Do you use gas for cooking in your home?: y",
+      "Do you have a car?: n",
+      "How many return flights in these categories have you taken within the past 12 months? (Onl: 2, 1, 0, false",
+      "How many minutes per day do you typically use public transport?: 45",
+      "How much have you spent in the following categories these past 12 months?: 0, 800, 300",
+      "How many items in these categories have you bought for yourself or your home these past 12: 0, 0, 0",
+      "Within the past 6 months, how many items in these categories have you bought? (A shirt wou: 4, 0, 1, 0",
+      "What best describes how you eat?: 736.6589136294",
+      "Your 12 answers cover the major part of your lifestyle and we can now show you a footprint: y"
+    ]
+  },
+  {
+    "slug": "elvira",
+    "member": "Elvira (Zheng Xinyao)",
+    "action": "Reduce, reuse, repair, recycle",
+    "token": "fb0bdd14-90d6-4a3e-a0c8-cb9a26abb321",
+    "generatedAt": "2026-06-13",
+    "totalKg": 2085.29,
+    "totalTonnes": "2.09",
+    "resultImage": "/images/act-now/un-calculator/member-results/elvira-unfccc-result.png",
+    "sectors": [
+      {
+        "label": "Food",
+        "value": "0.74t",
+        "kg": 736.66
+      },
+      {
+        "label": "Home",
+        "value": "1.00t",
+        "kg": 1003.63
+      },
+      {
+        "label": "Shopping",
+        "value": "0.13t",
+        "kg": 133.61
+      },
+      {
+        "label": "Transport",
+        "value": "0.21t",
+        "kg": 211.39
+      }
+    ],
+    "assumptions": [
+      "Our lifestyle choices have an impact on the climate. This is usually described as our carb: y",
+      "What is your country of residence?: CN",
+      "Does your household use renewable electricity?: i-dont-know",
+      "What is the primary heating source in your home?: heat-district-heating",
+      "Do you use gas for cooking in your home?: y",
+      "Do you have a car?: n",
+      "How many return flights in these categories have you taken within the past 12 months? (Onl: 0, 0, 0, false",
+      "How many minutes per day do you typically use public transport?: 30",
+      "How much have you spent in the following categories these past 12 months?: 0, 150, 80",
+      "How many items in these categories have you bought for yourself or your home these past 12: 0, 0, 0",
+      "Within the past 6 months, how many items in these categories have you bought? (A shirt wou: 1, 3, 0, 1",
+      "What best describes how you eat?: 736.6589136294",
+      "Your 12 answers cover the major part of your lifestyle and we can now show you a footprint: y"
+    ]
+  }
+]

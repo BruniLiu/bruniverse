@@ -1,0 +1,90 @@
+[
+  {
+    "slug": "janet",
+    "member": "Janet (Hou Yuheng)",
+    "action": "Walk, bike, or take public transport",
+    "generatedAt": "2026-06-13",
+    "processScreenshots": [
+      "/images/act-now/un-calculator/member-process/janet/01-intro-first.png",
+      "/images/act-now/un-calculator/member-process/janet/02-home-00.png",
+      "/images/act-now/un-calculator/member-process/janet/03-home-03.png",
+      "/images/act-now/un-calculator/member-process/janet/04-home-08-1.png",
+      "/images/act-now/un-calculator/member-process/janet/05-home-10.png",
+      "/images/act-now/un-calculator/member-process/janet/06-transport-27.png",
+      "/images/act-now/un-calculator/member-process/janet/07-transport-20.png",
+      "/images/act-now/un-calculator/member-process/janet/08-transport-30-2.png",
+      "/images/act-now/un-calculator/member-process/janet/09-lifestyle-47-1.png",
+      "/images/act-now/un-calculator/member-process/janet/10-lifestyle-44-1.png",
+      "/images/act-now/un-calculator/member-process/janet/11-lifestyle-40-1.png",
+      "/images/act-now/un-calculator/member-process/janet/12-diet-50.png",
+      "/images/act-now/un-calculator/member-process/janet/13-intro-last.png"
+    ],
+    "finalResultScreenshot": "/images/act-now/un-calculator/member-results/janet-unfccc-result.png"
+  },
+  {
+    "slug": "irene",
+    "member": "Irene (Han Yutong)",
+    "action": "Eat more vegetables",
+    "generatedAt": "2026-06-13",
+    "processScreenshots": [
+      "/images/act-now/un-calculator/member-process/irene/01-intro-first.png",
+      "/images/act-now/un-calculator/member-process/irene/02-home-00.png",
+      "/images/act-now/un-calculator/member-process/irene/03-home-03.png",
+      "/images/act-now/un-calculator/member-process/irene/04-home-08-1.png",
+      "/images/act-now/un-calculator/member-process/irene/05-home-10.png",
+      "/images/act-now/un-calculator/member-process/irene/06-transport-27.png",
+      "/images/act-now/un-calculator/member-process/irene/07-transport-20.png",
+      "/images/act-now/un-calculator/member-process/irene/08-transport-30-2.png",
+      "/images/act-now/un-calculator/member-process/irene/09-lifestyle-47-1.png",
+      "/images/act-now/un-calculator/member-process/irene/10-lifestyle-44-1.png",
+      "/images/act-now/un-calculator/member-process/irene/11-lifestyle-40-1.png",
+      "/images/act-now/un-calculator/member-process/irene/12-diet-50.png",
+      "/images/act-now/un-calculator/member-process/irene/13-intro-last.png"
+    ],
+    "finalResultScreenshot": "/images/act-now/un-calculator/member-results/irene-unfccc-result.png"
+  },
+  {
+    "slug": "bruni",
+    "member": "Bruni (Liu Xiangyi)",
+    "action": "Consider your travel",
+    "generatedAt": "2026-06-13",
+    "processScreenshots": [
+      "/images/act-now/un-calculator/member-process/bruni/01-intro-first.png",
+      "/images/act-now/un-calculator/member-process/bruni/02-home-00.png",
+      "/images/act-now/un-calculator/member-process/bruni/03-home-03.png",
+      "/images/act-now/un-calculator/member-process/bruni/04-home-08-1.png",
+      "/images/act-now/un-calculator/member-process/bruni/05-home-10.png",
+      "/images/act-now/un-calculator/member-process/bruni/06-transport-27.png",
+      "/images/act-now/un-calculator/member-process/bruni/07-transport-20.png",
+      "/images/act-now/un-calculator/member-process/bruni/08-transport-30-2.png",
+      "/images/act-now/un-calculator/member-process/bruni/09-lifestyle-47-1.png",
+      "/images/act-now/un-calculator/member-process/bruni/10-lifestyle-44-1.png",
+      "/images/act-now/un-calculator/member-process/bruni/11-lifestyle-40-1.png",
+      "/images/act-now/un-calculator/member-process/bruni/12-diet-50.png",
+      "/images/act-now/un-calculator/member-process/bruni/13-intro-last.png"
+    ],
+    "finalResultScreenshot": "/images/act-now/un-calculator/member-results/bruni-unfccc-result.png"
+  },
+  {
+    "slug": "elvira",
+    "member": "Elvira (Zheng Xinyao)",
+    "action": "Reduce, reuse, repair, recycle",
+    "generatedAt": "2026-06-13",
+    "processScreenshots": [
+      "/images/act-now/un-calculator/member-process/elvira/01-intro-first.png",
+      "/images/act-now/un-calculator/member-process/elvira/02-home-00.png",
+      "/images/act-now/un-calculator/member-process/elvira/03-home-03.png",
+      "/images/act-now/un-calculator/member-process/elvira/04-home-08-1.png",
+      "/images/act-now/un-calculator/member-process/elvira/05-home-10.png",
+      "/images/act-now/un-calculator/member-process/elvira/06-transport-27.png",
+      "/images/act-now/un-calculator/member-process/elvira/07-transport-20.png",
+      "/images/act-now/un-calculator/member-process/elvira/08-transport-30-2.png",
+      "/images/act-now/un-calculator/member-process/elvira/09-lifestyle-47-1.png",
+      "/images/act-now/un-calculator/member-process/elvira/10-lifestyle-44-1.png",
+      "/images/act-now/un-calculator/member-process/elvira/11-lifestyle-40-1.png",
+      "/images/act-now/un-calculator/member-process/elvira/12-diet-50.png",
+      "/images/act-now/un-calculator/member-process/elvira/13-intro-last.png"
+    ],
+    "finalResultScreenshot": "/images/act-now/un-calculator/member-results/elvira-unfccc-result.png"
+  }
+]

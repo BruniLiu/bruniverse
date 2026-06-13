@@ -4,6 +4,15 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import PageTransition from "./components/motion/PageTransition";
 import Stepper, { Step } from "./components/react-bits/Stepper";
 import ThemeToggle from "./components/theme/ThemeToggle";
+import {
+  AUTH_USERS_KEY,
+  clearSession,
+  loginUser,
+  loadSession,
+  saveSession,
+  signupUser,
+  toPublicUser,
+} from "./lib/auth";
 import ResearchWorkspace from "./workspace/ResearchWorkspace";
 import "./react.css";
 
@@ -35,9 +44,6 @@ const interestOptions = [
 const choiceButtonClass =
   "rounded-lg border px-3 py-2 text-left text-sm font-semibold leading-snug transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-200";
 
-const AUTH_USERS_KEY = "bruniverse-auth-users";
-const AUTH_SESSION_KEY = "bruniverse-auth-session";
-
 function normalizeIdentifier(value) {
   return String(value || "").trim().toLowerCase();
 }
@@ -54,34 +60,6 @@ function readUsers() {
 
 function writeUsers(users) {
   window.localStorage.setItem(AUTH_USERS_KEY, JSON.stringify(users));
-}
-
-function toPublicUser(user) {
-  if (!user) return null;
-  return {
-    id: user.id,
-    fullName: user.fullName,
-    email: user.email,
-    role: user.role,
-    interests: user.interests || [],
-  };
-}
-
-function saveSession(user) {
-  window.localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(toPublicUser(user)));
-}
-
-function loadSession() {
-  try {
-    const raw = window.localStorage.getItem(AUTH_SESSION_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
-function clearSession() {
-  window.localStorage.removeItem(AUTH_SESSION_KEY);
 }
 
 function findUser(identifier) {
@@ -142,30 +120,27 @@ function StarfieldBackground() {
 
 function LoginForm({ onSwitchMode, onLoginSuccess }) {
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     const form = event.currentTarget;
     const data = new FormData(form);
     const identifier = String(data.get("identifier") || "").trim();
     const password = String(data.get("password") || "");
 
-    const user = findUser(identifier);
-
-    if (!user) {
-      setMessage("No account was found for this email or name. Please sign up first.");
-      return;
-    }
-
-    if (user.password !== password) {
-      setMessage("Invalid password.");
-      return;
-    }
-
-    saveSession(user);
+    setIsLoading(true);
     setMessage("");
-    form.reset();
-    onLoginSuccess(toPublicUser(user));
+
+    try {
+      const user = await loginUser(identifier, password);
+      form.reset();
+      onLoginSuccess(user);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Unable to log in.");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -176,6 +151,7 @@ function LoginForm({ onSwitchMode, onLoginSuccess }) {
           type="text"
           autoComplete="username"
           required
+          disabled={isLoading}
           className={fieldClass}
           placeholder="name@university.edu"
         />
@@ -187,6 +163,7 @@ function LoginForm({ onSwitchMode, onLoginSuccess }) {
           type="password"
           autoComplete="current-password"
           required
+          disabled={isLoading}
           className={fieldClass}
           placeholder="Enter your password"
         />
@@ -200,9 +177,10 @@ function LoginForm({ onSwitchMode, onLoginSuccess }) {
 
       <button
         type="submit"
+        disabled={isLoading}
         className={primaryButtonClass}
       >
-        Log in
+        {isLoading ? "Logging in..." : "Log in"}
       </button>
 
       <div className="flex flex-col gap-2 pt-1 text-sm sm:flex-row sm:items-center sm:justify-between">
@@ -224,8 +202,17 @@ function DashboardPage({ onLogout }) {
   return <ResearchWorkspace onLogout={onLogout} />;
 }
 
+function getRedirectTarget() {
+  const params = new URLSearchParams(window.location.search);
+  const redirect = params.get("redirect");
+
+  if (redirect === "chat") return "./chat.html";
+  return "";
+}
+
 function SignUpForm({ onSwitchMode, onSignupSuccess }) {
   const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [signupData, setSignupData] = useState({
     role: "Student",
     fullName: "",
@@ -289,14 +276,17 @@ function SignUpForm({ onSwitchMode, onSignupSuccess }) {
     return true;
   }
 
-  function handleComplete() {
+  async function handleComplete() {
+    setIsSubmitting(true);
     try {
-      const user = createUser(signupData);
+      const user = await signupUser(signupData);
       setSignupData((current) => ({ ...current, password: "", confirmPassword: "" }));
       setMessage("");
       onSignupSuccess(user);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Unable to create the account.");
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -423,7 +413,7 @@ function SignUpForm({ onSwitchMode, onSignupSuccess }) {
             <div>
               <h2 className="text-xl font-bold leading-tight text-white">Security</h2>
               <p className="mt-2 text-sm font-medium leading-relaxed text-white/62">
-                Your account will be saved in this browser for the project demo.
+                Your account will be saved to the Bruniverse workspace service. If the API is offline, this demo falls back to browser storage.
               </p>
             </div>
 
@@ -479,6 +469,12 @@ function SignUpForm({ onSwitchMode, onSignupSuccess }) {
         </p>
       )}
 
+      {isSubmitting && (
+        <p className="rounded-lg border border-white/12 bg-white/[0.04] px-4 py-3 text-sm font-medium leading-6 text-white/62">
+          Creating your workspace...
+        </p>
+      )}
+
       <div className="flex flex-col gap-2 pt-1 text-sm sm:flex-row sm:items-center sm:justify-between">
         <a href="./index.html" className={footerLinkClass}>
           Back to Home
@@ -497,12 +493,28 @@ function SignUpForm({ onSwitchMode, onSignupSuccess }) {
 function LoginPage() {
   const [mode, setMode] = useState("login");
   const [currentUser, setCurrentUser] = useState(null);
+  const [redirectTarget] = useState(getRedirectTarget);
   const shouldReduceMotion = useReducedMotion();
   const isSignUp = mode === "signup";
 
   useEffect(() => {
-    setCurrentUser(loadSession());
-  }, []);
+    const session = loadSession();
+    if (session && redirectTarget) {
+      window.location.replace(redirectTarget);
+      return;
+    }
+
+    setCurrentUser(session);
+  }, [redirectTarget]);
+
+  function handleAuthSuccess(user) {
+    if (redirectTarget) {
+      window.location.replace(redirectTarget);
+      return;
+    }
+
+    setCurrentUser(user);
+  }
 
   function handleLogout() {
     clearSession();
@@ -558,12 +570,12 @@ function LoginPage() {
                 {isSignUp ? (
                   <SignUpForm
                     onSwitchMode={() => setMode("login")}
-                    onSignupSuccess={(user) => setCurrentUser(user)}
+                    onSignupSuccess={handleAuthSuccess}
                   />
                 ) : (
                   <LoginForm
                     onSwitchMode={() => setMode("signup")}
-                    onLoginSuccess={(user) => setCurrentUser(user)}
+                    onLoginSuccess={handleAuthSuccess}
                   />
                 )}
               </motion.div>

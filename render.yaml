@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: bruniverse
+    env: node
+    plan: starter
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: AI_PROVIDER
+        value: deepseek
+      - key: DEEPSEEK_MODEL
+        value: deepseek-chat
+      - key: DEEPSEEK_BASE_URL
+        value: https://api.deepseek.com
+      - key: BRUNIVERSE_DATA_DIR
+        value: /var/data/bruniverse
+      - key: CHAT_RATE_WINDOW_MS
+        value: 600000
+      - key: CHAT_RATE_LIMIT
+        value: 30
+      - key: DEEPSEEK_API_KEY
+        sync: false
+    disk:
+      name: bruniverse-data
+      mountPath: /var/data
+      sizeGB: 1

@@ -1,0 +1,459 @@
+{
+  "token": "8bc16080-d6c5-49d3-aee5-81ff042184ca",
+  "generatedAt": "2026-06-12T03:46:42.084Z",
+  "officialCalculator": "https://lifestylecalculator.com/unfccc",
+  "assumptions": [
+    "Country of residence: China",
+    "Household renewable electricity: I do not know",
+    "Primary heating: district heating",
+    "Cooking gas: yes",
+    "Car ownership: no",
+    "Flights in last 12 months: 0 short, 0 medium, 0 long",
+    "Public transport: 30 minutes/day",
+    "Annual lifestyle spending: furniture 0, sports/cultural events 500, beauty/hairdresser/spa 300",
+    "Appliances bought in past 12 months: 0 large, 0 medium, 0 small",
+    "Past 6 months clothing: 4 new clothes, 0 second-hand clothes, 1 new shoes, 0 second-hand shoes",
+    "Diet: I do not eat red meat"
+  ],
+  "choices": [
+    {
+      "id": "intro@first",
+      "question": "Intro",
+      "answer": [
+        {
+          "id": "intro@first:0#1",
+          "input": "y"
+        }
+      ]
+    },
+    {
+      "id": "home@00",
+      "question": "What is your country of residence?",
+      "answer": [
+        {
+          "id": "home@00#45",
+          "input": "CN"
+        }
+      ]
+    },
+    {
+      "id": "home@03",
+      "question": "Does your household use renewable electricity?",
+      "answer": [
+        {
+          "id": "home@03:0#3",
+          "input": "i-dont-know"
+        }
+      ]
+    },
+    {
+      "id": "home@08.1",
+      "question": "What is the primary heating source in your home?",
+      "answer": [
+        {
+          "id": "home@08.1:0#2",
+          "input": "heat-district-heating"
+        }
+      ]
+    },
+    {
+      "id": "home@10",
+      "question": "Do you use gas for cooking in your home?",
+      "answer": [
+        {
+          "id": "home@10:0#0",
+          "input": "y"
+        }
+      ]
+    },
+    {
+      "id": "transport@27",
+      "question": "Do you have a car?",
+      "answer": [
+        {
+          "id": "transport@27:0#1",
+          "input": "n"
+        }
+      ]
+    },
+    {
+      "id": "transport@20",
+      "question": "How many return flights in these categories have you taken within the past 12 months? (Only include private flying, not work related)",
+      "answer": [
+        {
+          "id": "transport@20:0#0",
+          "input": "0"
+        },
+        {
+          "id": "transport@20:1#0",
+          "input": "0"
+        },
+        {
+          "id": "transport@20:2#0",
+          "input": "0"
+        },
+        {
+          "id": "transport@20:3#0",
+          "input": "false"
+        }
+      ]
+    },
+    {
+      "id": "transport@30.2",
+      "question": "How many minutes per day do you typically use public transport?",
+      "answer": [
+        {
+          "id": "transport@30.2:0#0",
+          "input": "30"
+        }
+      ]
+    },
+    {
+      "id": "lifestyle@47.1",
+      "question": "How much have you spent in the following categories these past 12 months?",
+      "answer": [
+        {
+          "id": "lifestyle@47.1:0#0",
+          "input": "0"
+        },
+        {
+          "id": "lifestyle@47.1:1#0",
+          "input": "500"
+        },
+        {
+          "id": "lifestyle@47.1:2#0",
+          "input": "300"
+        }
+      ]
+    },
+    {
+      "id": "lifestyle@44.1",
+      "question": "How many items in these categories have you bought for yourself or your home these past 12 months?",
+      "answer": [
+        {
+          "id": "lifestyle@44.1:0#0",
+          "input": "0"
+        },
+        {
+          "id": "lifestyle@44.1:1#0",
+          "input": "0"
+        },
+        {
+          "id": "lifestyle@44.1:2#0",
+          "input": "0"
+        }
+      ]
+    },
+    {
+      "id": "lifestyle@40.1",
+      "question": "Within the past 6 months, how many items in these categories have you bought? (A shirt would be an item. A pair of socks maybe not)",
+      "answer": [
+        {
+          "id": "lifestyle@40.1:0#0",
+          "input": "4"
+        },
+        {
+          "id": "lifestyle@40.1:1#0",
+          "input": "0"
+        },
+        {
+          "id": "lifestyle@40.1:2#0",
+          "input": "1"
+        },
+        {
+          "id": "lifestyle@40.1:3#0",
+          "input": "0"
+        }
+      ]
+    },
+    {
+      "id": "diet@50",
+      "question": "What best describes how you eat?",
+      "answer": [
+        {
+          "id": "diet@50#3",
+          "input": "736.6589136294"
+        }
+      ]
+    },
+    {
+      "id": "intro@last",
+      "question": "Your 12 answers cover the major part of your lifestyle and we can now show you a footprint estimate.\nTo make it more accurate, we encourage you to also answer the questions covering activities such as hotel nights, specific flights, taxi rides, recycling habits, and more.",
+      "answer": [
+        {
+          "id": "intro@last:0#0",
+          "input": "y"
+        }
+      ]
+    }
+  ],
+  "lastBeforeResult": {
+    "sectorId": "intro",
+    "question": "Your 12 answers cover the major part of your lifestyle and we can now show you a footprint estimate.\nTo make it more accurate, we encourage you to also answer the questions covering activities such as hotel nights, specific flights, taxi rides, recycling habits, and more.",
+    "answers": [
+      {
+        "options": [
+          {
+            "input": "y",
+            "id": "intro@last:0#0",
+            "type": "button",
+            "option": "Show my footprint"
+          }
+        ],
+        "title": null
+      }
+    ],
+    "previousQuestionId": "diet@50",
+    "id": "intro@last",
+    "title": "Great job!",
+    "hasNextQuestion": false,
+    "meta": {
+      "percentage": 0.95,
+      "sectors": [
+        {
+          "emissions": 736.66,
+          "id": "diet",
+          "name": "Food",
+          "sectorDetails": [
+            {
+              "emissions": 736.66,
+              "id": "diet",
+              "name": "Food"
+            }
+          ],
+          "progress": {
+            "count": 1,
+            "total": 1,
+            "name": "Food",
+            "progress": 1
+          }
+        },
+        {
+          "emissions": 1003.63,
+          "id": "home",
+          "name": "Home",
+          "sectorDetails": [
+            {
+              "emissions": 480.77,
+              "id": "powerConsumption",
+              "name": "Electricity"
+            },
+            {
+              "emissions": 341.03,
+              "id": "heating",
+              "name": "Heating"
+            },
+            {
+              "emissions": 152.6,
+              "id": "cooking",
+              "name": "Cooking"
+            },
+            {
+              "emissions": 0.14,
+              "id": "waste",
+              "name": "Waste"
+            },
+            {
+              "emissions": 29.09,
+              "id": "water",
+              "name": "Water"
+            }
+          ],
+          "progress": {
+            "count": 4,
+            "total": 11,
+            "name": "Home",
+            "progress": 0.36363636363636365
+          }
+        },
+        {
+          "emissions": 495.65,
+          "id": "lifestyle",
+          "name": "Shopping",
+          "sectorDetails": [
+            {
+              "emissions": 127.53,
+              "id": "clothes",
+              "name": "Clothes"
+            },
+            {
+              "emissions": 18,
+              "id": "shoes",
+              "name": "Shoes"
+            },
+            {
+              "emissions": 251.18,
+              "id": "sportAndCultural",
+              "name": "Events"
+            },
+            {
+              "emissions": 98.94,
+              "id": "hairsalon",
+              "name": "Beauty"
+            }
+          ],
+          "progress": {
+            "count": 3,
+            "total": 5,
+            "name": "Shopping",
+            "progress": 0.6
+          }
+        },
+        {
+          "emissions": 211.39,
+          "id": "transport",
+          "name": "Transport",
+          "sectorDetails": [
+            {
+              "emissions": 30.21,
+              "id": "train",
+              "name": "Train"
+            },
+            {
+              "emissions": 181.18,
+              "id": "commute",
+              "name": "Commute"
+            }
+          ],
+          "progress": {
+            "count": 3,
+            "total": 17,
+            "name": "Transport",
+            "progress": 0.17647058823529413
+          }
+        }
+      ],
+      "totalEmissions": 2447.33,
+      "currentQuestionIndex": 11,
+      "numberOfQuestions": 11
+    }
+  },
+  "result": {
+    "totalEmissionInYear": 2447.33,
+    "yourClimateProfile": "Climate expert",
+    "description": {
+      "title": "Your estimated yearly carbon footprint is 2447 kg CO₂e",
+      "body": "Amazing! You are a true role model. Don’t be too hard on yourself - you’re doing fine. \n\nThe challenge now is to be persistent. Finding new areas where you can decrease your impact is hard but, you can do it! Why not help your friends to start the transition?"
+    },
+    "meta": {
+      "percentage": 1,
+      "sectors": [
+        {
+          "emissions": 736.66,
+          "id": "diet",
+          "name": "Food",
+          "sectorDetails": [
+            {
+              "emissions": 736.66,
+              "id": "diet",
+              "name": "Food"
+            }
+          ],
+          "progress": {
+            "count": 1,
+            "total": 1,
+            "name": "Food",
+            "progress": 1
+          }
+        },
+        {
+          "emissions": 1003.63,
+          "id": "home",
+          "name": "Home",
+          "sectorDetails": [
+            {
+              "emissions": 480.77,
+              "id": "powerConsumption",
+              "name": "Electricity"
+            },
+            {
+              "emissions": 341.03,
+              "id": "heating",
+              "name": "Heating"
+            },
+            {
+              "emissions": 152.6,
+              "id": "cooking",
+              "name": "Cooking"
+            },
+            {
+              "emissions": 0.14,
+              "id": "waste",
+              "name": "Waste"
+            },
+            {
+              "emissions": 29.09,
+              "id": "water",
+              "name": "Water"
+            }
+          ],
+          "progress": {
+            "count": 4,
+            "total": 11,
+            "name": "Home",
+            "progress": 0.36363636363636365
+          }
+        },
+        {
+          "emissions": 495.65,
+          "id": "lifestyle",
+          "name": "Shopping",
+          "sectorDetails": [
+            {
+              "emissions": 127.53,
+              "id": "clothes",
+              "name": "Clothes"
+            },
+            {
+              "emissions": 18,
+              "id": "shoes",
+              "name": "Shoes"
+            },
+            {
+              "emissions": 251.18,
+              "id": "sportAndCultural",
+              "name": "Events"
+            },
+            {
+              "emissions": 98.94,
+              "id": "hairsalon",
+              "name": "Beauty"
+            }
+          ],
+          "progress": {
+            "count": 3,
+            "total": 5,
+            "name": "Shopping",
+            "progress": 0.6
+          }
+        },
+        {
+          "emissions": 211.39,
+          "id": "transport",
+          "name": "Transport",
+          "sectorDetails": [
+            {
+              "emissions": 30.21,
+              "id": "train",
+              "name": "Train"
+            },
+            {
+              "emissions": 181.18,
+              "id": "commute",
+              "name": "Commute"
+            }
+          ],
+          "progress": {
+            "count": 3,
+            "total": 17,
+            "name": "Transport",
+            "progress": 0.17647058823529413
+          }
+        }
+      ],
+      "totalEmissions": 2447.33,
+      "currentQuestionIndex": 0,
+      "numberOfQuestions": 13
+    }
+  }
+}

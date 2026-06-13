@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import ReactDOM from "react-dom/client";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -8,6 +8,7 @@ import {
   BookOpen,
   Database,
   Leaf,
+  LogOut,
   MessageSquare,
   Plus,
   Send,
@@ -15,6 +16,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { streamDeepSeekReply } from "./lib/deepseek";
+import { clearSession, loadSession } from "./lib/auth";
 import PageTransition from "./components/motion/PageTransition";
 import ThemeToggle from "./components/theme/ThemeToggle";
 import "./react.css";
@@ -260,12 +262,27 @@ function ChatComposer({ value, onChange, onSend, disabled }) {
 function ChatApp() {
   const shouldReduceMotion = useReducedMotion();
   const abortControllerRef = useRef(null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
   const hasMessages = messages.length > 0;
+
+  useEffect(() => {
+    const session = loadSession();
+
+    if (!session?.id || !session?.email) {
+      const target = encodeURIComponent("chat");
+      window.location.replace(`./main.html?redirect=${target}`);
+      return;
+    }
+
+    setCurrentUser(session);
+    setCheckingAuth(false);
+  }, []);
 
   const welcomeMessages = useMemo(
     () => [
@@ -280,7 +297,7 @@ function ChatApp() {
 
   async function sendMessage(rawText) {
     const text = rawText.trim();
-    if (!text || isLoading) return;
+    if (!text || isLoading || !currentUser) return;
 
     const nextMessages = [...messages, { role: "user", content: text }];
     const assistantIndex = nextMessages.length;
@@ -349,10 +366,30 @@ function ChatApp() {
     setIsLoading(false);
   }
 
+  function logout() {
+    resetChat();
+    clearSession();
+    window.location.replace("./main.html?redirect=chat");
+  }
+
   return (
     <PageTransition transitionKey="chat" shouldReduceMotion={shouldReduceMotion}>
       <main className="aurora-landing relative h-[100svh] overflow-hidden bg-[#06060f] text-white">
         <StarfieldBackdrop />
+
+        {checkingAuth && (
+          <div className="relative z-10 grid h-full place-items-center px-5 text-center">
+            <div className="max-w-md rounded-lg border border-white/12 bg-white/[0.055] p-6 backdrop-blur-md">
+              <ShieldCheck className="mx-auto text-sky-100/76" size={28} />
+              <h1 className="mt-4 text-2xl font-bold text-white">Checking access</h1>
+              <p className="mt-3 text-sm leading-6 text-white/58">
+                Ask Unknown is available after login to prevent anonymous use of the AI chat.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {!checkingAuth && (
 
       <section className="relative z-10 grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)] px-3 py-3 sm:px-5 lg:px-8">
         <motion.header
@@ -370,7 +407,7 @@ function ChatApp() {
           </a>
           <div className="hidden items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-sky-100/62 sm:flex">
             <ShieldCheck size={15} />
-            Educational prototype
+            Signed in as {currentUser?.fullName || currentUser?.email}
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -380,6 +417,14 @@ function ChatApp() {
             >
               <Plus size={16} />
               <span className="hidden sm:inline">New chat</span>
+            </button>
+            <button
+              type="button"
+              onClick={logout}
+              className="inline-flex items-center gap-2 rounded-lg border border-white/12 bg-white/[0.04] px-3 py-2 text-sm font-bold text-white/66 transition hover:border-sky-100/30 hover:bg-white/[0.07] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sky-200"
+            >
+              <LogOut size={16} />
+              <span className="hidden sm:inline">Log out</span>
             </button>
             <ThemeToggle />
           </div>
@@ -510,6 +555,7 @@ function ChatApp() {
           </motion.div>
         </div>
       </section>
+        )}
       </main>
     </PageTransition>
   );

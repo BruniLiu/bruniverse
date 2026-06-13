@@ -304,15 +304,15 @@ function ActNowHub() {
                   />
                   <StatCard
                     label="Calculator"
-                    value="Full process"
-                    detail="Landing page, inputs, and final result screenshots are part of the evidence."
+                    value="Evidence attached"
+                    detail="Official workflow screenshots and member-specific final results are part of the evidence."
                     icon={Calculator}
                     shouldReduceMotion={shouldReduceMotion}
                   />
                   <StatCard
                     label="Action"
-                    value="Proof needed"
-                    detail="The strongest section is dated evidence showing the action was completed."
+                    value="Photo records"
+                    detail="Dated personal evidence shows each action was completed, not only planned."
                     icon={Camera}
                     shouldReduceMotion={shouldReduceMotion}
                   />
@@ -344,7 +344,7 @@ function ActNowHub() {
                   <ProofStep
                     icon={Calculator}
                     title="Calculate the footprint"
-                    copy="Show the calculator landing page, every input step, and the final CO2e result."
+                    copy="Show the calculator workflow, input context, and each member's final CO2e result."
                     shouldReduceMotion={shouldReduceMotion}
                   />
                   <ProofStep

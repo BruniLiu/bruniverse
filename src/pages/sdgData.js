@@ -511,33 +511,6 @@ export const sdgDetails = {
       },
     ],
   },
-  3: {
-    number: "SDG 3",
-    title: "Good Health and Well-being",
-    subtitle: "Ensure healthy lives and promote well-being for all at all ages.",
-    color: "from-rose-400/20 to-pink-500/10",
-    borderColor: "border-rose-400/30",
-    textColor: "text-rose-200/80",
-    heroGradient: "radial-gradient(circle_at_50%_30%,rgba(251,113,133,0.18)_0%,rgba(251,113,133,0.06)_40%,transparent_70%)",
-    overview:
-      "Good health is essential to human welfare and to sustained economic and social development. SDG 3 aims to ensure universal health coverage, reduce maternal and child mortality, end epidemics of communicable diseases, and strengthen the capacity of all countries for early warning and health risk management.",
-    targets: [
-      "Reduce global maternal mortality ratio to less than 70 per 100,000 live births",
-      "End preventable deaths of newborns and children under 5 years of age",
-      "End the epidemics of AIDS, tuberculosis, malaria, and neglected tropical diseases",
-      "Reduce premature mortality from non-communicable diseases by one third by 2030",
-      "Achieve universal health coverage, including financial risk protection and access to essential services",
-      "Strengthen the implementation of the WHO Framework Convention on Tobacco Control",
-    ],
-    facts: [
-      "Global life expectancy reached 73.4 years in 2024 but varies by over 30 years between countries.",
-      "Over 5 million children died before their fifth birthday in 2023, mostly from preventable causes.",
-      "Universal health coverage could avert 300 million cases of catastrophic health expenditure annually.",
-      "The global suicide rate is approximately 9 per 100,000 people - one death every 40 seconds.",
-      "Mental health conditions affect 1 in 8 people globally, yet funding remains critically low.",
-    ],
-    connections: "Health is both a driver and an outcome of sustainable development. Poverty (SDG 1) limits access to healthcare. Clean water (SDG 6) and sanitation prevent disease. Air pollution from energy use (SDG 7) causes 7 million premature deaths annually. Education (SDG 4) improves health literacy and outcomes.",
-  },
   16: {
     number: "SDG 16",
     title: "Peace, Justice and Strong Institutions",

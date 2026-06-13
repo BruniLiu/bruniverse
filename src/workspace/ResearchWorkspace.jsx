@@ -38,6 +38,9 @@ import { WorkspaceProvider, useWorkspace } from "./context/WorkspaceContext";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
 import OverviewDashboard from "./overview/OverviewDashboard";
+import CasesView from "./cases/CasesView";
+import EvidenceLedger from "./evidence/EvidenceLedger";
+import BriefStudio from "./briefs/BriefStudio";
 import LiteratureManager from "./literature/LiteratureManager";
 import LiteratureGraph from "./graph/LiteratureGraph";
 import NotesManager from "./notes/NotesManager";
@@ -51,6 +54,9 @@ const hashViewMap = {
   "#overview": "overview",
   "#datasets-section": "overview",
   "#dataset-hub": "overview",
+  "#cases": "cases",
+  "#evidence": "evidence",
+  "#briefs": "briefs",
   "#literature": "literature",
   "#notes": "notes",
   "#graph": "graph",
@@ -60,10 +66,9 @@ const hashViewMap = {
 function StarfieldBackground() {
   return (
     <div className="pointer-events-none absolute inset-[-5vh] z-0">
-      <div className="hero-starfield hero-starfield-far absolute inset-0 opacity-40" />
-      <div className="hero-starfield hero-starfield-near absolute inset-0 opacity-30" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_68%_26%,rgba(99,102,241,0.16)_0%,rgba(56,189,248,0.08)_26%,transparent_50%),radial-gradient(circle_at_28%_70%,rgba(129,140,248,0.09)_0%,transparent_40%),radial-gradient(circle_at_center,rgba(6,6,15,0.1)_0%,rgba(6,6,15,0.94)_78%)]" />
-      <div className="noise-overlay absolute inset-0 opacity-[0.08] mix-blend-screen" />
+      <div className="absolute inset-0 bg-[#050505]" />
+      <div className="absolute inset-0 opacity-[0.08] [background-image:linear-gradient(rgba(255,255,255,0.16)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.16)_1px,transparent_1px)] [background-size:56px_56px]" />
+      <div className="noise-overlay absolute inset-0 opacity-[0.045] mix-blend-screen" />
     </div>
   );
 }
@@ -136,6 +141,21 @@ function WorkspaceContent({ onLogout }) {
               {state.activeView === "overview" && (
                 <ViewTransition key="overview">
                   <OverviewDashboard />
+                </ViewTransition>
+              )}
+              {state.activeView === "cases" && (
+                <ViewTransition key="cases" className="h-full">
+                  <CasesView />
+                </ViewTransition>
+              )}
+              {state.activeView === "evidence" && (
+                <ViewTransition key="evidence" className="h-full">
+                  <EvidenceLedger />
+                </ViewTransition>
+              )}
+              {state.activeView === "briefs" && (
+                <ViewTransition key="briefs" className="h-full">
+                  <BriefStudio />
                 </ViewTransition>
               )}
               {state.activeView === "literature" && (

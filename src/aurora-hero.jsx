@@ -146,24 +146,29 @@ const aiVoices = [
 
 const datasetCategories = [
   {
-    title: "Education Data",
-    copy: "Indicators for access, attainment, digital learning, literacy, and educational equity.",
+    title: "Core SDG Portals",
+    copy: "Start with cross-goal indicators before narrowing each member's country case.",
+    sources: ["UN SDG Global Database", "World Bank SDG Atlas"],
   },
   {
-    title: "Climate Data",
-    copy: "Emissions, temperature, energy, disaster risk, and adaptation datasets for climate inquiry.",
+    title: "Education and Equity",
+    copy: "Use education-system indicators to support Elvira's SDG 4 analysis.",
+    sources: ["UNESCO UIS Data Browser", "SDG 4 Country Profiles"],
   },
   {
-    title: "Food Security Data",
-    copy: "Hunger, nutrition, food waste, agriculture, and food-system resilience indicators.",
+    title: "Food Security",
+    copy: "Connect Irene's SDG 2 argument to agriculture, nutrition, and food waste evidence.",
+    sources: ["FAOSTAT", "FAO SDG Data Portal", "UNEP Food Waste Index"],
   },
   {
-    title: "Inequality and Justice Data",
-    copy: "Data sources on poverty, gender equity, governance, institutional trust, and social outcomes.",
+    title: "Climate Transition",
+    copy: "Ground Janet's SDG 13 case in emissions, heat, risk, and adaptation data.",
+    sources: ["IEA China Emissions", "World Bank Climate Portal"],
   },
   {
-    title: "General SDG Data Portals",
-    copy: "Cross-goal portals for comparing indicators across regions, themes, and timelines.",
+    title: "Justice and Institutions",
+    copy: "Support Bruni's SDG 16 work with justice, governance, and rule-of-law datasets.",
+    sources: ["UNODC Data Portal", "Rule of Law Index"],
   },
 ];
 
@@ -660,14 +665,26 @@ function App() {
               key={category.title}
               variants={cardReveal}
               shouldReduceMotion={shouldReduceMotion}
-              className="min-h-[220px]"
+              className="flex min-h-[260px] flex-col"
             >
-              <h3 className="text-2xl font-bold leading-tight text-white">
-                {category.title}
-              </h3>
-              <p className="mt-4 text-sm font-medium leading-6 text-white/62">
-                {category.copy}
-              </p>
+              <div className="flex-1">
+                <h3 className="text-2xl font-bold leading-tight text-white">
+                  {category.title}
+                </h3>
+                <p className="mt-4 text-sm font-medium leading-6 text-white/62">
+                  {category.copy}
+                </p>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {category.sources.map((source) => (
+                    <span
+                      key={source}
+                      className="rounded-full border border-white/10 bg-black/18 px-3 py-1 text-[11px] font-semibold text-white/48"
+                    >
+                      {source}
+                    </span>
+                  ))}
+                </div>
+              </div>
               <CardLink href="./main.html#datasets-section">View datasets</CardLink>
             </GlassCard>
           ))}
