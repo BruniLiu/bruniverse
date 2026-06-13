@@ -176,6 +176,8 @@ const heroTeamLine = teamMembers
   .map((member) => `${member.englishName} ${member.name}`)
   .join("  /  ");
 
+const heroGroupName = "Group 28 · crispy spicy chicken burger";
+
 function SectionShell({
   id,
   eyebrow,
@@ -368,6 +370,8 @@ function App() {
                 complicated.
               </p>
               <div className="mx-auto w-fit max-w-full rounded-full border border-white/10 bg-white/[0.045] px-4 py-2 text-center text-[11px] font-semibold leading-5 text-white/54 shadow-[0_14px_44px_rgba(0,0,0,0.18)] backdrop-blur sm:text-xs lg:mx-0 lg:text-left">
+                <span className="text-sky-100/68">{heroGroupName}</span>
+                <span className="px-2 text-white/24">/</span>
                 <span className="text-sky-100/68">Research team:</span>{" "}
                 <span className="break-words">{heroTeamLine}</span>
               </div>
